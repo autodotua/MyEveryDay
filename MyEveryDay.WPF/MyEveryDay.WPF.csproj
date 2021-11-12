@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows10.0.18362.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <SatelliteResourceLanguages>zh-cn</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyEveryDay\MyEveryDay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FzCoreLib.Windows">
+      <HintPath>..\libs\FzCoreLib.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="FzStandardLib">
+      <HintPath>..\libs\FzStandardLib.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernWpf.FzExtension">
+      <HintPath>..\libs\ModernWpf.FzExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsAPICodePack.FzExtension">
+      <HintPath>..\libs\WindowsAPICodePack.FzExtension.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

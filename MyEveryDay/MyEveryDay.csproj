@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediaInfo.Wrapper.Core" Version="21.3.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FzCoreLib.Windows">
+      <HintPath>..\libs\FzCoreLib.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="FzStandardLib">
+      <HintPath>..\libs\FzStandardLib.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernWpf.FzExtension">
+      <HintPath>..\libs\ModernWpf.FzExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsAPICodePack.FzExtension">
+      <HintPath>..\libs\WindowsAPICodePack.FzExtension.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
