@@ -92,6 +92,14 @@
             <ui:FlyoutService.Flyout>
                 <ui:MenuFlyout />
             </ui:FlyoutService.Flyout>
+        </Button>    <Button
+            Grid.Column="2"
+            Click="AddDayButton_Click"
+            Style="{StaticResource AddButtonStyle}">
+            <ui:SymbolIcon Symbol="Add" />
+            <ui:FlyoutService.Flyout>
+                <ui:MenuFlyout />
+            </ui:FlyoutService.Flyout>
         </Button>
     </Grid>
 </UserControl>

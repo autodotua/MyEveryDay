@@ -189,6 +189,10 @@ namespace MyEveryDay.WPF
         {
             var menu = FlyoutService.GetFlyout(sender as Button) as MenuFlyout;
             menu.Items.Clear();
+            if (ViewModel.Year == null)
+            {
+                return;
+            }
             for (int i = 1; i <= 12; i++)
             {
                 if (!ViewModel.Months.Contains(i))
@@ -196,6 +200,26 @@ namespace MyEveryDay.WPF
                     var item = new MenuItem() { Header = i + "月" };
                     int month = i;
                     item.Click += (s, e) => InsertIntoDates(ViewModel.Months, month);
+                    menu.Items.Add(item);
+                }
+            }
+        }
+        private void AddDayButton_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = FlyoutService.GetFlyout(sender as Button) as MenuFlyout;
+            menu.Items.Clear();
+            if(ViewModel.Year==null||ViewModel.Month==null)
+            {
+                return;
+            }
+            int count = DateTime.DaysInMonth(ViewModel.Year.Value, ViewModel.Month.Value);
+            for (int i = 1; i <= count; i++)
+            {
+                if (!ViewModel.Days.Contains(i))
+                {
+                    var item = new MenuItem() { Header = i + "日" };
+                    int day = i;
+                    item.Click += (s, e) => InsertIntoDates(ViewModel.Days, day);
                     menu.Items.Add(item);
                 }
             }
