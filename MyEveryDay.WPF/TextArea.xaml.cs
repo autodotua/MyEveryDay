@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyEveryDay.WPF.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -68,7 +69,7 @@ namespace MyEveryDay.WPF
         }
         private TextRange GetAllRange(RichTextBox rtb)
         {
-       return     new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+            return new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         }
         public async Task LoadData(int year, int month, int day)
         {
@@ -128,15 +129,15 @@ namespace MyEveryDay.WPF
             }
         }
 
-        private void CreateTable(int column,int row)
+        private void CreateTable(int column, int row)
         {
             var tab = new Table();
             var gridLenghtConvertor = new GridLengthConverter();
-            for(int i=0;i<column;i++)
+            for (int i = 0; i < column; i++)
             {
-                tab.Columns.Add(new TableColumn() {  Width = GridLength .Auto});
+                tab.Columns.Add(new TableColumn() { Width = GridLength.Auto });
             }
-          
+
             tab.RowGroups.Add(new TableRowGroup());
 
             for (int i = 0; i < row; i++)
@@ -144,10 +145,10 @@ namespace MyEveryDay.WPF
                 tab.RowGroups[0].Rows.Add(new TableRow());
                 var tabRow = tab.RowGroups[0].Rows[i];
 
-                tabRow.Cells.Add(new TableCell(new Paragraph(new Run("R"+(i+1)))) { TextAlignment = TextAlignment.Center });
-                for (int j=1;j<column;j++)
+                tabRow.Cells.Add(new TableCell(new Paragraph(new Run("R" + (i + 1)))) { TextAlignment = TextAlignment.Center });
+                for (int j = 1; j < column; j++)
                 {
-                    tabRow.Cells.Add(new TableCell(new Paragraph(new Run(i==0?("C"+(j+1)): ""))) { TextAlignment = TextAlignment.Center });
+                    tabRow.Cells.Add(new TableCell(new Paragraph(new Run(i == 0 ? ("C" + (j + 1)) : ""))) { TextAlignment = TextAlignment.Center });
                 }
             }
             RichTextBox temp = new RichTextBox();
@@ -179,6 +180,14 @@ namespace MyEveryDay.WPF
             }
         }
 
-   
+        private async void TableButton_Click(object sender, RoutedEventArgs e)
+        {
+            await new CreateTableDialog().ShowAsync();
+        }
+
+        private void PasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Paste();
+        }
     }
 }
