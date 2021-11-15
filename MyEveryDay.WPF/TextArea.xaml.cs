@@ -27,6 +27,7 @@ namespace MyEveryDay.WPF
         private (int year, int month, int day)? date = null;
         private bool needSave = false;
         private Timer timer;
+
         public TextArea()
         {
             InitializeComponent();
@@ -52,7 +53,6 @@ namespace MyEveryDay.WPF
             await RecordService.SaveAsync(date.Value.year, date.Value.month, date.Value.day, rtf, text);
         }
 
-
         private void txt_TextChanged(object sender, TextChangedEventArgs e)
         {
             needSave = true;
@@ -67,10 +67,12 @@ namespace MyEveryDay.WPF
             IsEnabled = false;
             txt.Document.Blocks.Clear();
         }
+
         private TextRange GetAllRange(RichTextBox rtb)
         {
             return new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         }
+
         public async Task LoadData(int year, int month, int day)
         {
             txt.TextChanged -= txt_TextChanged;
@@ -123,19 +125,20 @@ namespace MyEveryDay.WPF
                     e.Handled = true;
                     Paste();
                     break;
+
                 case Key.Q:
                     CreateTable(5, 5);
                     break;
             }
         }
 
-        private void CreateTable(int column, int row)
+        private void CreateTable(int row, int column)
         {
             var tab = new Table();
             var gridLenghtConvertor = new GridLengthConverter();
             for (int i = 0; i < column; i++)
             {
-                tab.Columns.Add(new TableColumn() { Width = GridLength.Auto });
+                tab.Columns.Add(new TableColumn() { Width = new GridLength(1, GridUnitType.Star) });
             }
 
             tab.RowGroups.Add(new TableRowGroup());
@@ -160,6 +163,7 @@ namespace MyEveryDay.WPF
             txt.Selection.ApplyPropertyValue(ForegroundProperty, Foreground);
             txt.CaretPosition = txt.Selection.End;
         }
+
         private void Paste()
         {
             string format = null;
@@ -182,7 +186,12 @@ namespace MyEveryDay.WPF
 
         private async void TableButton_Click(object sender, RoutedEventArgs e)
         {
-            await new CreateTableDialog().ShowAsync();
+            var dialog = new CreateTableDialog();
+            if (await dialog.ShowAsync() == ModernWpf.Controls.ContentDialogResult.Primary)
+            {
+                (var row, var column) = dialog.Result;
+                CreateTable(row, column);
+            }
         }
 
         private void PasteButton_Click(object sender, RoutedEventArgs e)

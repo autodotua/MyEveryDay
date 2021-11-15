@@ -10,6 +10,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     CloseButtonText="取消"
+    IsPrimaryButtonEnabled="{Binding CanOk}"
     PrimaryButtonText="确定"
     mc:Ignorable="d">
     <Grid
@@ -29,25 +30,40 @@
             Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            ui:ControlHelper.Header="行" />
+            ui:ControlHelper.Header="行"
+            Text="{Binding RowCount, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            ui:ControlHelper.Header="列" />
-        <Border  Grid.Row="2" Grid.Column="2"  ClipToBounds="True">
+            ui:ControlHelper.Header="列"
+            Text="{Binding ColumnCount, UpdateSourceTrigger=PropertyChanged}" />
+        <Border
+            Grid.Row="2"
+            Grid.Column="2"
+            ClipToBounds="True"
+            IsHitTestVisible="False">
             <DataGrid
-            HeadersVisibility="None" GridLinesVisibility="All" Margin="-19,0,-16,0"
-            >
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="" Width="0"/>
-                <DataGridTextColumn Header="" Width="36"/>
-                <DataGridTextColumn Header="" Width="36"/>
-                <DataGridTextColumn Header="" Width="36"/>
-            </DataGrid.Columns>
-            <DataObject/>
-            <DataObject/>
-            <DataObject/>
+                Margin="-19,0,-16,0"
+                GridLinesVisibility="All"
+                HeadersVisibility="None">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="0"
+                        Header="" />
+                    <DataGridTextColumn
+                        Width="36"
+                        Header="" />
+                    <DataGridTextColumn
+                        Width="36"
+                        Header="" />
+                    <DataGridTextColumn
+                        Width="36"
+                        Header="" />
+                </DataGrid.Columns>
+                <DataObject />
+                <DataObject />
+                <DataObject />
             </DataGrid>
         </Border>
     </Grid>
