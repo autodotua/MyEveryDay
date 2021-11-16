@@ -74,6 +74,15 @@ namespace MyEveryDay.WPF
                 case nameof(ViewModel.FontSize):
                     txt.Selection.ApplyPropertyValue(FontSizeProperty, ViewModel.FontSize);
                     break;
+                case nameof(ViewModel.Bold):
+                    txt.Selection.ApplyPropertyValue(FontWeightProperty, ViewModel.Bold?FontWeights.Bold:FontWeights.Normal);
+                    break;
+                case nameof(ViewModel.Italic):
+                    txt.Selection.ApplyPropertyValue(FontStyleProperty, ViewModel.Italic ? FontStyles.Italic : FontStyles.Normal) ;
+                    break;
+                case nameof(ViewModel.Underline):
+                    txt.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, ViewModel.Underline?TextDecorations.Underline:new TextDecorationCollection()); 
+                    break;
                 default:
                     break;
             }
@@ -222,13 +231,27 @@ namespace MyEveryDay.WPF
 
         private void SelectionChanged(object sender, RoutedEventArgs e)
         {
-            var font = txt.Selection.GetPropertyValue(FontFamilyProperty) as FontFamily;
+            updatingSelection = true;
+            if (txt.Selection.GetPropertyValue(FontFamilyProperty) is FontFamily font)
+            {
+                ViewModel.FontFamily = font;
+            }
             if (txt.Selection.GetPropertyValue(FontSizeProperty) is double size)
             {
                 ViewModel.FontSize = size;
             }
-            updatingSelection = true;
-            ViewModel.FontFamily = font;
+            if (txt.Selection.GetPropertyValue(FontWeightProperty) is FontWeight fontWeight)
+            {
+                ViewModel.Bold = fontWeight > FontWeights.Normal;
+            }
+            if (txt.Selection.GetPropertyValue(FontStyleProperty) is FontStyle fs)
+            {
+                ViewModel.Italic = fs == FontStyles.Italic;
+            }
+            if (txt.Selection.GetPropertyValue(Inline.TextDecorationsProperty) is TextDecorationCollection td)
+            {
+                ViewModel.Underline = td.Any(p => p.Location == TextDecorationLocation.Underline);
+            }
             updatingSelection = false;
         }
 
@@ -316,6 +339,7 @@ namespace MyEveryDay.WPF
                     break;
             }
         }
+
     }
 
     public class TextAreaViewModel : INotifyPropertyChanged
@@ -351,6 +375,26 @@ namespace MyEveryDay.WPF
             get => selectedFont;
             set => this.SetValueAndNotify(ref selectedFont, value, nameof(FontFamily));
         }
+
+        private bool bold;
+        public bool Bold
+        {
+            get => bold;
+            set => this.SetValueAndNotify(ref bold, value, nameof(Bold));
+        }
+        private bool italic;
+        public bool Italic
+        {
+            get => italic;
+            set => this.SetValueAndNotify(ref italic, value, nameof(Italic));
+        }
+        private bool underline;
+        public bool Underline
+        {
+            get => underline;
+            set => this.SetValueAndNotify(ref underline, value, nameof(Underline));
+        }
+
 
     }
 }

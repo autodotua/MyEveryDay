@@ -22,6 +22,11 @@
                 TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="Transparent" />
             </Style>
+            <Style
+                BasedOn="{StaticResource DefaultToggleButtonStyle}"
+                TargetType="{x:Type ToggleButton}">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
         </Panel.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -81,6 +86,15 @@
                 <sys:Double>72</sys:Double>
             </ComboBox>
 
+            <ToggleButton IsChecked="{Binding Bold}">
+                <ui:SymbolIcon Symbol="Bold" />
+            </ToggleButton>
+            <ToggleButton IsChecked="{Binding Italic}">
+                <ui:SymbolIcon Symbol="Italic" />
+            </ToggleButton>
+            <ToggleButton IsChecked="{Binding Underline}">
+                <ui:SymbolIcon Symbol="Underline" />
+            </ToggleButton>
             <Button
                 Click="AlignButton_Click"
                 Tag="-1">
