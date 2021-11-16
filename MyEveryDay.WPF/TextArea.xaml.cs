@@ -1,7 +1,10 @@
-﻿using MyEveryDay.WPF.Dialogs;
+﻿using FzLib;
+using MyEveryDay.WPF.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -19,17 +23,56 @@ using System.Windows.Shapes;
 
 namespace MyEveryDay.WPF
 {
-    /// <summary>
-    /// TextArea.xaml 的交互逻辑
-    /// </summary>
+    public class FontDisplayConverter : IValueConverter
+    {
+        public static readonly XmlLanguage LocalLanguage = XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.Name);
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is FontFamily))
+            {
+                return null;
+            }
+
+            var font = value as FontFamily;
+            if (font.FamilyNames.Keys.Contains(LocalLanguage))
+            {
+                return font.FamilyNames[LocalLanguage];
+            }
+            return font.Source;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TextAreaViewModel : INotifyPropertyChanged
+    {
+        public ICollection<FontFamily> Fonts { get; } 
+            = System.Windows.Media.Fonts.SystemFontFamilies
+            .OrderBy(p=>p.FamilyNames.Keys.Contains(FontDisplayConverter.LocalLanguage))
+            .ToList();
+        private FontFamily selectedFont;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public FontFamily SelectedFont
+        {
+            get => selectedFont;
+            set => this.SetValueAndNotify(ref selectedFont, value, nameof(SelectedFont));
+        }
+
+    }
     public partial class TextArea : UserControl
     {
         private (int year, int month, int day)? date = null;
         private bool needSave = false;
         private Timer timer;
-
+        public TextAreaViewModel ViewModel { get; } = new TextAreaViewModel();
         public TextArea()
         {
+            DataContext = ViewModel;
             InitializeComponent();
         }
 
@@ -53,7 +96,7 @@ namespace MyEveryDay.WPF
             await RecordService.SaveAsync(date.Value.year, date.Value.month, date.Value.day, rtf, text);
         }
 
-        private void txt_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextChanged(object sender, TextChangedEventArgs e)
         {
             needSave = true;
         }
@@ -61,7 +104,7 @@ namespace MyEveryDay.WPF
         public async Task DisableAsync()
         {
             needSave = false;
-            txt.TextChanged -= txt_TextChanged;
+            txt.TextChanged -= TextChanged;
             await SaveAsync();
             date = null;
             IsEnabled = false;
@@ -75,7 +118,7 @@ namespace MyEveryDay.WPF
 
         public async Task LoadData(int year, int month, int day)
         {
-            txt.TextChanged -= txt_TextChanged;
+            txt.TextChanged -= TextChanged;
             await SaveAsync();
             IsEnabled = true;
             txt.Document.Blocks.Clear();
@@ -86,7 +129,7 @@ namespace MyEveryDay.WPF
                 var range = GetAllRange(txt);
                 MemoryStream ms = new MemoryStream(Encoding.Default.GetBytes(rtf));
                 range.Load(ms, DataFormats.Rtf);
-                txt.TextChanged += txt_TextChanged;
+                txt.TextChanged += TextChanged;
             }
             catch (KeyNotFoundException)
             {
@@ -113,7 +156,7 @@ namespace MyEveryDay.WPF
             await SaveAsync();
         }
 
-        private void txt_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.Control)
             {
@@ -147,7 +190,7 @@ namespace MyEveryDay.WPF
 
             for (int i = 0; i < rowCount; i++)
             {
-                tab.RowGroups[0].Rows.Add(new TableRow() );
+                tab.RowGroups[0].Rows.Add(new TableRow());
                 var tabRow = tab.RowGroups[0].Rows[i];
 
                 tabRow.Cells.Add(new TableCell(new Paragraph(new Run(i == 0 ? "" : ("R" + (i + 1))))) { TextAlignment = TextAlignment.Center });
@@ -203,6 +246,22 @@ namespace MyEveryDay.WPF
         private void PasteButton_Click(object sender, RoutedEventArgs e)
         {
             Paste();
+        }
+        private bool updatingFont = false;
+        private void SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var font = txt.Selection.GetPropertyValue(FontFamilyProperty) as FontFamily;
+            updatingFont = true;
+            ViewModel.SelectedFont = font;
+            updatingFont = false;
+        }
+
+        private void Font_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!updatingFont)
+            {
+                txt.Selection.ApplyPropertyValue(FontFamilyProperty, ViewModel.SelectedFont);
+            }
         }
     }
 }

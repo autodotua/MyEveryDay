@@ -11,6 +11,9 @@
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:FontDisplayConverter x:Key="FontDisplayConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -21,18 +24,36 @@
         <ui:CommandBar
             HorizontalAlignment="Left"
             Background="Transparent"
-            DefaultLabelPosition="Bottom">
+            DefaultLabelPosition="Collapsed">
             <ui:AppBarButton
-                Icon="Paste" Click="PasteButton_Click"
-                Label="粘贴" />
+                Click="PasteButton_Click"
+                Icon="Paste"
+                ToolTip="粘贴" />
             <ui:AppBarButton
                 Click="TableButton_Click"
-                Label="表格">
+                ToolTip="表格">
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Glyph="&#xE80A;" />
                 </ui:AppBarButton.Icon>
 
             </ui:AppBarButton>
+            <ui:AppBarElementContainer>
+                <ComboBox
+                    Width="160"
+                    Height="24"
+                    Margin="0,8,0,0"
+                    Padding="8,4"
+                    ItemsSource="{Binding Fonts}"
+                    SelectedItem="{Binding SelectedFont}"
+                    SelectionChanged="Font_SelectionChanged"
+                    ToolTip="字体">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ., Converter={StaticResource FontDisplayConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </ui:AppBarElementContainer>
         </ui:CommandBar>
 
         <RichTextBox
@@ -40,7 +61,8 @@
             Grid.Row="2"
             AcceptsReturn="True"
             AcceptsTab="True"
-            PreviewKeyDown="txt_PreviewKeyDown">
+            PreviewKeyDown="PreviewKeyDown"
+            SelectionChanged="SelectionChanged">
             <RichTextBox.Style>
                 <Style
                     BasedOn="{StaticResource DefaultRichTextBoxStyle}"
