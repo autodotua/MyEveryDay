@@ -47,60 +47,40 @@ namespace MyEveryDay.WPF
         }
     }
 
-    public class TextAreaViewModel : INotifyPropertyChanged
-    {
-        public ICollection<FontFamily> Fonts { get; } 
-            = System.Windows.Media.Fonts.SystemFontFamilies
-            .OrderBy(p=>p.FamilyNames.Keys.Contains(FontDisplayConverter.LocalLanguage))
-            .ToList();
-        private FontFamily selectedFont;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public FontFamily SelectedFont
-        {
-            get => selectedFont;
-            set => this.SetValueAndNotify(ref selectedFont, value, nameof(SelectedFont));
-        }
-
-    }
     public partial class TextArea : UserControl
     {
         private (int year, int month, int day)? date = null;
         private bool needSave = false;
         private Timer timer;
-        public TextAreaViewModel ViewModel { get; } = new TextAreaViewModel();
+        private bool updatingSelection = false;
         public TextArea()
         {
             DataContext = ViewModel;
             InitializeComponent();
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
-        public async Task SaveAsync()
+        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!date.HasValue)
+            if (updatingSelection)
             {
                 return;
             }
-            string text = null;
-            string rtf = null;
-            Dispatcher.Invoke(() =>
+            switch (e.PropertyName)
             {
-                var range = new TextRange(txt.Document.ContentStart, txt.Document.ContentEnd);
-                text = range.Text;
-                MemoryStream ms = new MemoryStream();
-                range.Save(ms, DataFormats.Rtf);
-                ms.Close();
-                rtf = Encoding.Default.GetString(ms.ToArray());
-            });
-            await RecordService.SaveAsync(date.Value.year, date.Value.month, date.Value.day, rtf, text);
+                case nameof(ViewModel.FontFamily):
+                    txt.Selection.ApplyPropertyValue(FontFamilyProperty, ViewModel.FontFamily);
+                    break;
+                case nameof(ViewModel.FontSize):
+                    txt.Selection.ApplyPropertyValue(FontSizeProperty, ViewModel.FontSize);
+                    break;
+                default:
+                    break;
+            }
+
         }
 
-        private void TextChanged(object sender, TextChangedEventArgs e)
-        {
-            needSave = true;
-        }
-
+        public TextAreaViewModel ViewModel { get; } = new TextAreaViewModel();
         public async Task DisableAsync()
         {
             needSave = false;
@@ -109,11 +89,6 @@ namespace MyEveryDay.WPF
             date = null;
             IsEnabled = false;
             txt.Document.Blocks.Clear();
-        }
-
-        private TextRange GetAllRange(RichTextBox rtb)
-        {
-            return new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         }
 
         public async Task LoadData(int year, int month, int day)
@@ -140,36 +115,24 @@ namespace MyEveryDay.WPF
             }
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        public async Task SaveAsync()
         {
-            timer = new Timer(new TimerCallback(async t =>
-            {
-                if (needSave)
-                {
-                    await SaveAsync();
-                }
-            }), null, 10000, 10000);
-        }
-
-        private async void UserControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            await SaveAsync();
-        }
-
-        private void PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (Keyboard.Modifiers != ModifierKeys.Control)
+            if (!date.HasValue)
             {
                 return;
             }
-            switch (e.Key)
+            string text = null;
+            string rtf = null;
+            Dispatcher.Invoke(() =>
             {
-                case Key.V:
-                    e.Handled = true;
-                    Paste();
-                    break;
-
-            }
+                var range = new TextRange(txt.Document.ContentStart, txt.Document.ContentEnd);
+                text = range.Text;
+                MemoryStream ms = new MemoryStream();
+                range.Save(ms, DataFormats.Rtf);
+                ms.Close();
+                rtf = Encoding.Default.GetString(ms.ToArray());
+            });
+            await RecordService.SaveAsync(date.Value.year, date.Value.month, date.Value.day, rtf, text);
         }
 
         private void CreateTable(int rowCount, IList<int> columnWidths, bool border)
@@ -209,6 +172,13 @@ namespace MyEveryDay.WPF
             txt.CaretPosition = txt.Selection.End;
         }
 
+
+
+        private TextRange GetAllRange(RichTextBox rtb)
+        {
+            return new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+        }
+
         private void Paste()
         {
             string format = null;
@@ -229,6 +199,39 @@ namespace MyEveryDay.WPF
             }
         }
 
+        private void PasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Paste();
+        }
+
+        private void TextPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers != ModifierKeys.Control)
+            {
+                return;
+            }
+            switch (e.Key)
+            {
+                case Key.V:
+                    e.Handled = true;
+                    Paste();
+                    break;
+
+            }
+        }
+
+        private void SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var font = txt.Selection.GetPropertyValue(FontFamilyProperty) as FontFamily;
+            if (txt.Selection.GetPropertyValue(FontSizeProperty) is double size)
+            {
+                ViewModel.FontSize = size;
+            }
+            updatingSelection = true;
+            ViewModel.FontFamily = font;
+            updatingSelection = false;
+        }
+
         private async void TableButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new CreateTableDialog();
@@ -243,25 +246,92 @@ namespace MyEveryDay.WPF
             }
         }
 
-        private void PasteButton_Click(object sender, RoutedEventArgs e)
+        private void TextChanged(object sender, TextChangedEventArgs e)
         {
-            Paste();
+            needSave = true;
         }
-        private bool updatingFont = false;
-        private void SelectionChanged(object sender, RoutedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var font = txt.Selection.GetPropertyValue(FontFamilyProperty) as FontFamily;
-            updatingFont = true;
-            ViewModel.SelectedFont = font;
-            updatingFont = false;
+            timer = new Timer(new TimerCallback(async t =>
+            {
+                if (needSave)
+                {
+                    await SaveAsync();
+                }
+            }), null, 10000, 10000);
         }
 
-        private void Font_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (!updatingFont)
+            await SaveAsync();
+        }
+
+        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            CopyOrCut(false);
+        }
+
+        private void CutButton_Click(object sender, RoutedEventArgs e)
+        {
+            CopyOrCut(true);
+        }
+
+        private void CopyOrCut(bool cut)
+        {
+            var selection = txt.Selection;
+            if (selection.IsEmpty)
             {
-                txt.Selection.ApplyPropertyValue(FontFamilyProperty, ViewModel.SelectedFont);
+                return;
+            }
+            DataObject data = new DataObject();
+            data.SetText(selection.Text);
+            MemoryStream ms = new MemoryStream();
+            selection.Save(ms, DataFormats.Rtf);
+            ms.Close();
+            data.SetData(DataFormats.Rtf, Encoding.Default.GetString(ms.ToArray()));
+            Clipboard.SetDataObject(data, true);
+            if (cut)
+            {
+                txt.Focus();
+                System.Windows.Forms.SendKeys.SendWait("{BS}");
             }
         }
+    }
+
+    public class TextAreaViewModel : INotifyPropertyChanged
+    {
+        private double fontSize;
+
+        private FontFamily selectedFont;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ICollection<FontFamily> Fonts { get; }
+                                    = System.Windows.Media.Fonts.SystemFontFamilies
+            .OrderBy(p => p.FamilyNames.Keys.Contains(FontDisplayConverter.LocalLanguage))
+            .ToList();
+        public double FontSize
+        {
+            get => fontSize;
+            set
+            {
+                if (value < 1)
+                {
+                    value = 1;
+                }
+                if (value > 144)
+                {
+                    value = 144;
+                }
+                this.SetValueAndNotify(ref fontSize, value, nameof(FontSize));
+            }
+        }
+        public FontFamily FontFamily
+        {
+            get => selectedFont;
+            set => this.SetValueAndNotify(ref selectedFont, value, nameof(FontFamily));
+        }
+
     }
 }

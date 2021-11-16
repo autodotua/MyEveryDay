@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MyEveryDay.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -17,52 +18,103 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="8" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:CommandBar
-            HorizontalAlignment="Left"
-            Background="Transparent"
-            DefaultLabelPosition="Collapsed">
-            <ui:AppBarButton
-                Click="PasteButton_Click"
-                Icon="Paste"
-                ToolTip="粘贴" />
-            <ui:AppBarButton
-                Click="TableButton_Click"
-                ToolTip="表格">
-                <ui:AppBarButton.Icon>
-                    <ui:FontIcon Glyph="&#xE80A;" />
-                </ui:AppBarButton.Icon>
+        <ui:SimpleStackPanel
+            Grid.Row="2"
+            Margin="8,0"
+            Orientation="Horizontal"
+            Spacing="8">
+            <ComboBox
+                Width="160"
+                ui:ControlHelper.Header="字体"
+                ItemsSource="{Binding Fonts}"
+                SelectedItem="{Binding FontFamily}"
+                ToolTip="字体">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ., Converter={StaticResource FontDisplayConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
-            </ui:AppBarButton>
-            <ui:AppBarElementContainer>
-                <ComboBox
-                    Width="160"
-                    Height="24"
-                    Margin="0,8,0,0"
-                    Padding="8,4"
-                    ItemsSource="{Binding Fonts}"
-                    SelectedItem="{Binding SelectedFont}"
-                    SelectionChanged="Font_SelectionChanged"
-                    ToolTip="字体">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding ., Converter={StaticResource FontDisplayConverter}}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </ui:AppBarElementContainer>
-        </ui:CommandBar>
+            <ComboBox
+                Width="72"
+                ui:ControlHelper.Header="字号"
+                Text="{Binding FontSize}">
+                <sys:Double>4</sys:Double>
+                <sys:Double>5</sys:Double>
+                <sys:Double>6</sys:Double>
+                <sys:Double>7</sys:Double>
+                <sys:Double>8</sys:Double>
+                <sys:Double>9</sys:Double>
+                <sys:Double>10</sys:Double>
+                <sys:Double>11</sys:Double>
+                <sys:Double>12</sys:Double>
+                <sys:Double>13</sys:Double>
+                <sys:Double>14</sys:Double>
+                <sys:Double>15</sys:Double>
+                <sys:Double>16</sys:Double>
+                <sys:Double>18</sys:Double>
+                <sys:Double>20</sys:Double>
+                <sys:Double>24</sys:Double>
+                <sys:Double>28</sys:Double>
+                <sys:Double>32</sys:Double>
+                <sys:Double>36</sys:Double>
+                <sys:Double>42</sys:Double>
+                <sys:Double>48</sys:Double>
+                <sys:Double>64</sys:Double>
+                <sys:Double>72</sys:Double>
+            </ComboBox>
+
+        </ui:SimpleStackPanel>
+        <ui:SimpleStackPanel
+            Margin="8,0"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Panel.Resources>
+                <Style
+                    BasedOn="{StaticResource DefaultButtonStyle}"
+                    TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+            </Panel.Resources>
+            <Button
+                Click="CopyButton_Click"
+                ToolTip="复制">
+                <ui:SymbolIcon Symbol="Copy" />
+            </Button>    
+            <Button
+                Click="CutButton_Click"
+                ToolTip="剪切">
+                <ui:SymbolIcon Symbol="Cut" />
+            </Button>
+            <Button
+                Click="PasteButton_Click"
+                ToolTip="粘贴">
+                <ui:SymbolIcon Symbol="Paste" />
+            </Button>
+            <Button
+                Click="TableButton_Click"
+                ToolTip="创建表格">
+                <ui:FontIcon Glyph="&#xE80A;" />
+
+            </Button>
+        </ui:SimpleStackPanel>
 
         <RichTextBox
             x:Name="txt"
-            Grid.Row="2"
+            Grid.Row="99"
             AcceptsReturn="True"
             AcceptsTab="True"
-            PreviewKeyDown="PreviewKeyDown"
-            SelectionChanged="SelectionChanged">
+            ContextMenu="{x:Null}"
+            PreviewKeyDown="TextPreviewKeyDown"
+            SelectionChanged="SelectionChanged"
+            UndoLimit="100">
             <RichTextBox.Style>
                 <Style
                     BasedOn="{StaticResource DefaultRichTextBoxStyle}"

@@ -83,7 +83,7 @@ namespace MyEveryDay.WPF.Dialogs
                 {
                     value = 1;
                 }
-                Columns = value.HasValue == null ? null
+                Columns = value.HasValue ==false ? null
                     : new ObservableCollection<IndexAndWidth>(
                     Enumerable.Range(1, value.Value)
                     .Select(p => new IndexAndWidth() { Index = p, Width = 120 }));
