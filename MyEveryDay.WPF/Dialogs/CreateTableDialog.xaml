@@ -7,64 +7,96 @@
     xmlns:local="clr-namespace:MyEveryDay.WPF.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="创建表格"
     d:DesignHeight="450"
     d:DesignWidth="800"
     CloseButtonText="取消"
     IsPrimaryButtonEnabled="{Binding CanOk}"
     PrimaryButtonText="确定"
     mc:Ignorable="d">
-    <Grid
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="8" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="8" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBox
-            Grid.Row="2"
+    <ui:SimpleStackPanel
+        Orientation="Vertical"
+        Spacing="8">
+        <Grid
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ui:ControlHelper.Header="行"
-            Text="{Binding RowCount, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox
-            Grid.Column="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ui:ControlHelper.Header="列"
-            Text="{Binding ColumnCount, UpdateSourceTrigger=PropertyChanged}" />
-        <Border
-            Grid.Row="2"
-            Grid.Column="2"
-            ClipToBounds="True"
-            IsHitTestVisible="False">
+            VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBox
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ui:ControlHelper.Header="行"
+                Text="{Binding RowCount, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox
+                Grid.Column="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ui:ControlHelper.Header="列"
+                Text="{Binding ColumnCount, UpdateSourceTrigger=PropertyChanged}" />
+            <Border
+                Grid.Row="2"
+                Grid.Column="2"
+                ClipToBounds="True"
+                IsHitTestVisible="False">
+                <DataGrid
+                    Margin="-19,0,-16,0"
+                    GridLinesVisibility="All"
+                    HeadersVisibility="None">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="0"
+                            Header="" />
+                        <DataGridTextColumn
+                            Width="36"
+                            Header="" />
+                        <DataGridTextColumn
+                            Width="36"
+                            Header="" />
+                        <DataGridTextColumn
+                            Width="36"
+                            Header="" />
+                    </DataGrid.Columns>
+                    <DataObject />
+                    <DataObject />
+                    <DataObject />
+                </DataGrid>
+            </Border>
+        </Grid>
+
+        <ui:SimpleStackPanel Spacing="8" HorizontalAlignment="Center">
+            <TextBlock
+                Grid.Column="2"
+                Text="列宽" />
             <DataGrid
-                Margin="-19,0,-16,0"
-                GridLinesVisibility="All"
-                HeadersVisibility="None">
+                MaxHeight="240"
+            
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                ItemsSource="{Binding Columns}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Width="0"
-                        Header="" />
-                    <DataGridTextColumn
-                        Width="36"
-                        Header="" />
-                    <DataGridTextColumn
-                        Width="36"
-                        Header="" />
-                    <DataGridTextColumn
-                        Width="36"
-                        Header="" />
+                        Binding="{Binding Index}"
+                        Header="列号" MinWidth="60"
+                        IsReadOnly="True" />
+                    <DataGridTextColumn MinWidth="120"
+                        Binding="{Binding Width}"
+                        Header="宽度" />
                 </DataGrid.Columns>
-                <DataObject />
-                <DataObject />
-                <DataObject />
             </DataGrid>
-        </Border>
-    </Grid>
+        </ui:SimpleStackPanel>
+        <CheckBox
+            Content="显示边框"
+            IsChecked="{Binding Border}" />
+    </ui:SimpleStackPanel>
 </ui:ContentDialog>

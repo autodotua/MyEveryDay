@@ -126,30 +126,32 @@ namespace MyEveryDay.WPF
                     Paste();
                     break;
 
-                case Key.Q:
-                    CreateTable(5, 5);
-                    break;
             }
         }
 
-        private void CreateTable(int row, int column)
+        private void CreateTable(int rowCount, IList<int> columnWidths, bool border)
         {
             var tab = new Table();
-            var gridLenghtConvertor = new GridLengthConverter();
-            for (int i = 0; i < column; i++)
+            if (border)
             {
-                tab.Columns.Add(new TableColumn() { Width = new GridLength(1, GridUnitType.Star) });
+                tab.BorderBrush = Brushes.Gray;
+                tab.BorderThickness = new Thickness(1);
+            }
+            var gridLenghtConvertor = new GridLengthConverter();
+            foreach (var width in columnWidths)
+            {
+                tab.Columns.Add(new TableColumn() { Width = new GridLength(width) });
             }
 
             tab.RowGroups.Add(new TableRowGroup());
 
-            for (int i = 0; i < row; i++)
+            for (int i = 0; i < rowCount; i++)
             {
-                tab.RowGroups[0].Rows.Add(new TableRow());
+                tab.RowGroups[0].Rows.Add(new TableRow() );
                 var tabRow = tab.RowGroups[0].Rows[i];
 
-                tabRow.Cells.Add(new TableCell(new Paragraph(new Run("R" + (i + 1)))) { TextAlignment = TextAlignment.Center });
-                for (int j = 1; j < column; j++)
+                tabRow.Cells.Add(new TableCell(new Paragraph(new Run(i == 0 ? "" : ("R" + (i + 1))))) { TextAlignment = TextAlignment.Center });
+                for (int j = 1; j < columnWidths.Count; j++)
                 {
                     tabRow.Cells.Add(new TableCell(new Paragraph(new Run(i == 0 ? ("C" + (j + 1)) : ""))) { TextAlignment = TextAlignment.Center });
                 }
@@ -189,8 +191,12 @@ namespace MyEveryDay.WPF
             var dialog = new CreateTableDialog();
             if (await dialog.ShowAsync() == ModernWpf.Controls.ContentDialogResult.Primary)
             {
-                (var row, var column) = dialog.Result;
-                CreateTable(row, column);
+                var table = dialog.Result;
+                if (table != null)
+                {
+
+                    CreateTable(table.RowCount, table.ColumnWidths, table.Border);
+                }
             }
         }
 
