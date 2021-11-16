@@ -297,6 +297,25 @@ namespace MyEveryDay.WPF
                 System.Windows.Forms.SendKeys.SendWait("{BS}");
             }
         }
+
+        private void AlignButton_Click(object sender, RoutedEventArgs e)
+        {
+            int type = int.Parse((sender as Button).Tag as string);
+            switch (type)
+            {
+                case 0:
+                    txt.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Center);
+                    break;
+                case -1:
+                    txt.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Left);
+                    break;
+                case 1:
+                    txt.Selection.ApplyPropertyValue(Block.TextAlignmentProperty, TextAlignment.Right);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public class TextAreaViewModel : INotifyPropertyChanged

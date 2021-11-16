@@ -16,11 +16,11 @@ namespace MyEveryDay.WPF
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            var xcr = Resources.MergedDictionaries.OfType<XamlControlsResources>().FirstOrDefault();
-            if (xcr != null)
-            {
-                xcr.UseCompactResources = true;
-            }
+            //var xcr = Resources.MergedDictionaries.OfType<XamlControlsResources>().FirstOrDefault();
+            //if (xcr != null)
+            //{
+            //    xcr.UseCompactResources = true;
+            //}
         }
     }
 }

@@ -16,6 +16,13 @@
         <local:FontDisplayConverter x:Key="FontDisplayConverter" />
     </UserControl.Resources>
     <Grid>
+        <Panel.Resources>
+            <Style
+                BasedOn="{StaticResource DefaultButtonStyle}"
+                TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+        </Panel.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
@@ -29,9 +36,11 @@
             Margin="8,0"
             Orientation="Horizontal"
             Spacing="8">
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="字体：" />
             <ComboBox
                 Width="160"
-                ui:ControlHelper.Header="字体"
                 ItemsSource="{Binding Fonts}"
                 SelectedItem="{Binding FontFamily}"
                 ToolTip="字体">
@@ -41,10 +50,11 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="字号：" />
             <ComboBox
                 Width="72"
-                ui:ControlHelper.Header="字号"
                 Text="{Binding FontSize}">
                 <sys:Double>4</sys:Double>
                 <sys:Double>5</sys:Double>
@@ -71,23 +81,33 @@
                 <sys:Double>72</sys:Double>
             </ComboBox>
 
+            <Button
+                Click="AlignButton_Click"
+                Tag="-1">
+                <ui:SymbolIcon Symbol="AlignLeft" />
+            </Button>
+            <Button
+                Click="AlignButton_Click"
+                Tag="0">
+                <ui:SymbolIcon Symbol="AlignCenter" />
+            </Button>
+            <Button
+                Click="AlignButton_Click"
+                Tag="1">
+                <ui:SymbolIcon Symbol="AlignRight" />
+            </Button>
+
         </ui:SimpleStackPanel>
         <ui:SimpleStackPanel
             Margin="8,0"
             Orientation="Horizontal"
             Spacing="8">
-            <Panel.Resources>
-                <Style
-                    BasedOn="{StaticResource DefaultButtonStyle}"
-                    TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent" />
-                </Style>
-            </Panel.Resources>
+
             <Button
                 Click="CopyButton_Click"
                 ToolTip="复制">
                 <ui:SymbolIcon Symbol="Copy" />
-            </Button>    
+            </Button>
             <Button
                 Click="CutButton_Click"
                 ToolTip="剪切">
@@ -102,7 +122,6 @@
                 Click="TableButton_Click"
                 ToolTip="创建表格">
                 <ui:FontIcon Glyph="&#xE80A;" />
-
             </Button>
         </ui:SimpleStackPanel>
 
