@@ -62,7 +62,7 @@ namespace MyEveryDay.WPF
         }
 
     }
-    public partial class DateSelector : UserControl
+    public partial class DateSelector : UserControl, INotifyPropertyChanged
     {
         public DateSelectorViewModel ViewModel { get; set; } = new DateSelectorViewModel();
         public DateSelector()
@@ -78,55 +78,64 @@ namespace MyEveryDay.WPF
             {
                 case nameof(ViewModel.Year):
                     {
-                        if(ViewModel.Year==null)
+                        if (ViewModel.Year == null)
                         {
                             ViewModel.Months.Clear();
                             ViewModel.Month = null;
                             break;
                         }
-                        ViewModel.Months =new ObservableCollection<int>(await RecordService.GetMonths(ViewModel.Year.Value));
-                        if(ViewModel.Year==today.Year&& !ViewModel.Months.Contains(today.Month))
+                        ViewModel.Months = new ObservableCollection<int>(await RecordService.GetMonths(ViewModel.Year.Value));
+                        if (ViewModel.Year == today.Year && !ViewModel.Months.Contains(today.Month))
                         {
                             InsertIntoDates(ViewModel.Months, today.Month);
                         }
-                        if(ViewModel.Months.Count>0)
+                        if (ViewModel.Months.Count > 0)
                         {
                             ViewModel.Month = ViewModel.Months[0];
                         }
                     }
-                    break;    
+                    break;
                 case nameof(ViewModel.Month):
                     {
-                        if(ViewModel.Month == null)
+                        if (ViewModel.Month == null)
                         {
                             ViewModel.Days.Clear();
                             ViewModel.Day = null;
                             break;
                         }
-                        ViewModel.Days =new ObservableCollection<int>(await RecordService.GetDays(ViewModel.Year.Value,ViewModel.Month.Value));
-                        if(ViewModel.Year==today.Year&&ViewModel.Month==today.Month&& !ViewModel.Days.Contains(today.Day))
+                        ViewModel.Days = new ObservableCollection<int>(await RecordService.GetDays(ViewModel.Year.Value, ViewModel.Month.Value));
+                        if (ViewModel.Year == today.Year && ViewModel.Month == today.Month && !ViewModel.Days.Contains(today.Day))
                         {
                             InsertIntoDates(ViewModel.Days, today.Day);
                         }
-                        if(ViewModel.Days.Count>0)
+                        if (ViewModel.Days.Count > 0)
                         {
                             ViewModel.Day = ViewModel.Days[0];
                         }
                     }
                     break;
                 case nameof(ViewModel.Day):
-                    if(ViewModel.Day==null)
+                    if (ViewModel.Day == null)
                     {
+                        CurrentDate = null;
                         SelectedDateChanged?.Invoke(this, SelectedDateChangedEventArgs.FromNull());
                     }
                     else
                     {
+                        CurrentDate = (ViewModel.Year.Value, ViewModel.Month.Value, ViewModel.Day.Value);
                         SelectedDateChanged?.Invoke(this, SelectedDateChangedEventArgs.FromDate(ViewModel.Year.Value, ViewModel.Month.Value, ViewModel.Day.Value));
                     }
                     break;
                 default:
                     break;
             }
+        }
+
+        private (int Year, int Month, int Day)? currentDate;
+        public (int Year, int Month, int Day)? CurrentDate
+        {
+            get => currentDate;
+            set => this.SetValueAndNotify(ref currentDate, value, nameof(CurrentDate));
         }
 
         public async Task InitializeAsync()
@@ -173,7 +182,7 @@ namespace MyEveryDay.WPF
         private void AddYearButton_Click(object sender, RoutedEventArgs e)
         {
             var menu = FlyoutService.GetFlyout(sender as Button) as MenuFlyout;
-            for (int i = DateTime.Today.Year-10; i <= DateTime.Today.Year+10; i++)
+            for (int i = DateTime.Today.Year - 10; i <= DateTime.Today.Year + 10; i++)
             {
                 if (!ViewModel.Years.Contains(i))
                 {
@@ -208,7 +217,7 @@ namespace MyEveryDay.WPF
         {
             var menu = FlyoutService.GetFlyout(sender as Button) as MenuFlyout;
             menu.Items.Clear();
-            if(ViewModel.Year==null||ViewModel.Month==null)
+            if (ViewModel.Year == null || ViewModel.Month == null)
             {
                 return;
             }
@@ -225,6 +234,7 @@ namespace MyEveryDay.WPF
             }
         }
         public event EventHandler<SelectedDateChangedEventArgs> SelectedDateChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     public class SelectedDateChangedEventArgs

@@ -1,9 +1,11 @@
 ﻿using FzLib;
+using FzLib.WPF;
 using MyEveryDay.WPF.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -58,6 +61,7 @@ namespace MyEveryDay.WPF
             DataContext = ViewModel;
             InitializeComponent();
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            Dispatcher.ShutdownFinished += (s, e) => SaveAsync().Wait();
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -75,13 +79,13 @@ namespace MyEveryDay.WPF
                     txt.Selection.ApplyPropertyValue(FontSizeProperty, ViewModel.FontSize);
                     break;
                 case nameof(ViewModel.Bold):
-                    txt.Selection.ApplyPropertyValue(FontWeightProperty, ViewModel.Bold?FontWeights.Bold:FontWeights.Normal);
+                    txt.Selection.ApplyPropertyValue(FontWeightProperty, ViewModel.Bold ? FontWeights.Bold : FontWeights.Normal);
                     break;
                 case nameof(ViewModel.Italic):
-                    txt.Selection.ApplyPropertyValue(FontStyleProperty, ViewModel.Italic ? FontStyles.Italic : FontStyles.Normal) ;
+                    txt.Selection.ApplyPropertyValue(FontStyleProperty, ViewModel.Italic ? FontStyles.Italic : FontStyles.Normal);
                     break;
                 case nameof(ViewModel.Underline):
-                    txt.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, ViewModel.Underline?TextDecorations.Underline:new TextDecorationCollection()); 
+                    txt.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, ViewModel.Underline ? TextDecorations.Underline : new TextDecorationCollection());
                     break;
                 default:
                     break;
@@ -188,24 +192,44 @@ namespace MyEveryDay.WPF
             return new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         }
 
-        private void Paste()
+        private bool Paste()
         {
             string format = null;
+            MemoryStream ms = null;
             if (Clipboard.ContainsData(DataFormats.Rtf))
             {
                 format = DataFormats.Rtf;
+                ms = new MemoryStream(Encoding.Default.GetBytes(Clipboard.GetData(format) as string));
             }
             else if (Clipboard.ContainsData(DataFormats.Text))
             {
                 format = DataFormats.Text;
+                ms = new MemoryStream(Encoding.Default.GetBytes(Clipboard.GetText()));
+            }
+            else if (Clipboard.ContainsData(DataFormats.Bitmap))
+            {
+                return false;
+                //try
+                //{
+                //    format = DataFormats.Bitmap;
+                //    var bitmap = Clipboard.GetImage().ToBitmap();
+                //    ms = new MemoryStream();
+                //    bitmap.Save(ms, ImageFormat.Png);
+                //    ms.Seek(0, SeekOrigin.Begin);
+                //}
+                //catch (Exception ex)
+                //{
+                //    return;
+                //}
             }
             if (format != null)
             {
-                using var ms = new MemoryStream(Encoding.Default.GetBytes(Clipboard.GetData(format) as string));
                 txt.Selection.Load(ms, format);
                 txt.Selection.ApplyPropertyValue(ForegroundProperty, Foreground);
                 txt.CaretPosition = txt.Selection.End;
             }
+            ms?.Dispose();
+            return true;
         }
 
         private void PasteButton_Click(object sender, RoutedEventArgs e)
@@ -222,8 +246,11 @@ namespace MyEveryDay.WPF
             switch (e.Key)
             {
                 case Key.V:
-                    e.Handled = true;
-                    Paste();
+                    if (Paste())
+                    {
+
+                        e.Handled = true;
+                    }
                     break;
 
             }
@@ -284,11 +311,6 @@ namespace MyEveryDay.WPF
             }), null, 10000, 10000);
         }
 
-        private async void UserControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            await SaveAsync();
-        }
-
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -339,6 +361,12 @@ namespace MyEveryDay.WPF
                     break;
             }
         }
+
+        private void ClearFormatButton_Click(object sender, RoutedEventArgs e)
+        {
+            txt.Selection.ClearAllProperties();
+        }
+
 
     }
 

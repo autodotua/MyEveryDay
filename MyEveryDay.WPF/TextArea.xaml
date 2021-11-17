@@ -10,138 +10,159 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     Loaded="UserControl_Loaded"
-    Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <UserControl.Resources>
         <local:FontDisplayConverter x:Key="FontDisplayConverter" />
     </UserControl.Resources>
     <Grid>
-        <Panel.Resources>
-            <Style
-                BasedOn="{StaticResource DefaultButtonStyle}"
-                TargetType="{x:Type Button}">
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
-            <Style
-                BasedOn="{StaticResource DefaultToggleButtonStyle}"
-                TargetType="{x:Type ToggleButton}">
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
-        </Panel.Resources>
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="8" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="8" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <ui:SimpleStackPanel 
+            Orientation="Horizontal" Focusable="False"
+            Spacing="16">
+            <Panel.Resources>
+                <Style
+                BasedOn="{StaticResource DefaultButtonStyle}"
+                TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style
+                BasedOn="{StaticResource DefaultToggleButtonStyle}"
+                TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+            </Panel.Resources>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="4" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button
+                    Grid.RowSpan="99"
+                    Click="PasteButton_Click"
+                    ToolTip="粘贴">
+                    <ui:SymbolIcon Symbol="Paste" />
+                </Button>
+                <Button
+                    Grid.Column="2"
+                    Click="CopyButton_Click"
+                    ToolTip="复制">
+                    <ui:SymbolIcon Symbol="Copy" />
+                </Button>
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="2 "
+                    Click="CutButton_Click"
+                    ToolTip="剪切">
+                    <ui:SymbolIcon Symbol="Cut" />
+                </Button>
+            </Grid>
 
-        <ui:SimpleStackPanel
-            Grid.Row="2"
-            Margin="8,0"
-            Orientation="Horizontal"
-            Spacing="8">
-            <TextBlock
-                VerticalAlignment="Center"
-                Text="字体：" />
-            <ComboBox
-                Width="160"
-                ItemsSource="{Binding Fonts}"
-                SelectedItem="{Binding FontFamily}"
-                ToolTip="字体">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding ., Converter={StaticResource FontDisplayConverter}}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBlock
-                VerticalAlignment="Center"
-                Text="字号：" />
-            <ComboBox
-                Width="72"
-                Text="{Binding FontSize}">
-                <sys:Double>4</sys:Double>
-                <sys:Double>5</sys:Double>
-                <sys:Double>6</sys:Double>
-                <sys:Double>7</sys:Double>
-                <sys:Double>8</sys:Double>
-                <sys:Double>9</sys:Double>
-                <sys:Double>10</sys:Double>
-                <sys:Double>11</sys:Double>
-                <sys:Double>12</sys:Double>
-                <sys:Double>13</sys:Double>
-                <sys:Double>14</sys:Double>
-                <sys:Double>15</sys:Double>
-                <sys:Double>16</sys:Double>
-                <sys:Double>18</sys:Double>
-                <sys:Double>20</sys:Double>
-                <sys:Double>24</sys:Double>
-                <sys:Double>28</sys:Double>
-                <sys:Double>32</sys:Double>
-                <sys:Double>36</sys:Double>
-                <sys:Double>42</sys:Double>
-                <sys:Double>48</sys:Double>
-                <sys:Double>64</sys:Double>
-                <sys:Double>72</sys:Double>
-            </ComboBox>
+            <ui:SimpleStackPanel
+                Orientation="Vertical"
+                Spacing="4">
 
-            <ToggleButton IsChecked="{Binding Bold}">
-                <ui:SymbolIcon Symbol="Bold" />
-            </ToggleButton>
-            <ToggleButton IsChecked="{Binding Italic}">
-                <ui:SymbolIcon Symbol="Italic" />
-            </ToggleButton>
-            <ToggleButton IsChecked="{Binding Underline}">
-                <ui:SymbolIcon Symbol="Underline" />
-            </ToggleButton>
-            <Button
-                Click="AlignButton_Click"
-                Tag="-1">
-                <ui:SymbolIcon Symbol="AlignLeft" />
-            </Button>
-            <Button
-                Click="AlignButton_Click"
-                Tag="0">
-                <ui:SymbolIcon Symbol="AlignCenter" />
-            </Button>
-            <Button
-                Click="AlignButton_Click"
-                Tag="1">
-                <ui:SymbolIcon Symbol="AlignRight" />
-            </Button>
+                <ui:SimpleStackPanel
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <ComboBox
+                        Width="160"
+                        ItemsSource="{Binding Fonts}"
+                        SelectedItem="{Binding FontFamily}"
+                        ToolTip="字体">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ., Converter={StaticResource FontDisplayConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox
+                        Width="72" ToolTip="字体大小" IsEditable="True"
+                        Text="{Binding FontSize}">
+                        <sys:Double>4</sys:Double>
+                        <sys:Double>5</sys:Double>
+                        <sys:Double>6</sys:Double>
+                        <sys:Double>7</sys:Double>
+                        <sys:Double>8</sys:Double>
+                        <sys:Double>9</sys:Double>
+                        <sys:Double>10</sys:Double>
+                        <sys:Double>11</sys:Double>
+                        <sys:Double>12</sys:Double>
+                        <sys:Double>13</sys:Double>
+                        <sys:Double>14</sys:Double>
+                        <sys:Double>15</sys:Double>
+                        <sys:Double>16</sys:Double>
+                        <sys:Double>18</sys:Double>
+                        <sys:Double>20</sys:Double>
+                        <sys:Double>24</sys:Double>
+                        <sys:Double>28</sys:Double>
+                        <sys:Double>32</sys:Double>
+                        <sys:Double>36</sys:Double>
+                        <sys:Double>42</sys:Double>
+                        <sys:Double>48</sys:Double>
+                        <sys:Double>64</sys:Double>
+                        <sys:Double>72</sys:Double>
+                    </ComboBox>
+                </ui:SimpleStackPanel>
+                <ui:SimpleStackPanel
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <ToggleButton ToolTip="加粗" IsChecked="{Binding Bold}">
+                        <ui:SymbolIcon Symbol="Bold" />
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding Italic}" ToolTip="斜体">
+                        <ui:SymbolIcon Symbol="Italic" />
+                    </ToggleButton>
+                    <ToggleButton ToolTip="下划线" IsChecked="{Binding Underline}">
+                        <ui:SymbolIcon Symbol="Underline" />
+                    </ToggleButton>
+                    <Button
+                        Click="AlignButton_Click" ToolTip="左对齐"
+                        Tag="-1">
+                        <ui:SymbolIcon Symbol="AlignLeft" />
+                    </Button>
+                    <Button
+                        Click="AlignButton_Click" ToolTip="居中对齐"
+                        Tag="0">
+                        <ui:SymbolIcon Symbol="AlignCenter" />
+                    </Button>
+                    <Button
+                        Click="AlignButton_Click" ToolTip="右对齐"
+                        Tag="1">
+                        <ui:SymbolIcon Symbol="AlignRight" />
+                    </Button>
+                    <Button ToolTip="清除格式" Click="ClearFormatButton_Click">
+                        <ui:FontIcon Glyph="&#xE1C8;" />
+                    </Button>
 
+                </ui:SimpleStackPanel>
+            </ui:SimpleStackPanel>
+
+            <ui:SimpleStackPanel
+                Orientation="Vertical"
+                Spacing="0">
+                <Button
+                    Click="TableButton_Click"
+                    ToolTip="创建表格">
+                    <ui:FontIcon Glyph="&#xE80A;" />
+                </Button>
+            </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
-        <ui:SimpleStackPanel
-            Margin="8,0"
-            Orientation="Horizontal"
-            Spacing="8">
-
-            <Button
-                Click="CopyButton_Click"
-                ToolTip="复制">
-                <ui:SymbolIcon Symbol="Copy" />
-            </Button>
-            <Button
-                Click="CutButton_Click"
-                ToolTip="剪切">
-                <ui:SymbolIcon Symbol="Cut" />
-            </Button>
-            <Button
-                Click="PasteButton_Click"
-                ToolTip="粘贴">
-                <ui:SymbolIcon Symbol="Paste" />
-            </Button>
-            <Button
-                Click="TableButton_Click"
-                ToolTip="创建表格">
-                <ui:FontIcon Glyph="&#xE80A;" />
-            </Button>
-        </ui:SimpleStackPanel>
-
         <RichTextBox
             x:Name="txt"
-            Grid.Row="99"
+            Grid.Row="2"
             AcceptsReturn="True"
             AcceptsTab="True"
             ContextMenu="{x:Null}"
@@ -205,10 +226,7 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsEnabled" Value="false">
                                         <Setter Property="Opacity" Value="0.5" />
-                                        <!--<Setter Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
-                                        <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
-                                        <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
-                                        <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundDisabled}" />-->
+                          
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="true">
                                         <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushPointerOver}" />

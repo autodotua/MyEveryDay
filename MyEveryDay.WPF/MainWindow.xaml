@@ -35,6 +35,17 @@
         <local:TextArea
             x:Name="textArea"
             Grid.Column="2"
-            Margin="0,40,0,0" />
+            Margin="0,40,0,32" />
+
+        <ui:CommandBar
+            Grid.Row="4"
+            Grid.Column="2"
+            Margin="-4,0,0,0"
+            VerticalAlignment="Bottom">
+            <ui:AppBarButton
+                Click="ExportButton_Click"
+                Icon="Share"
+                Label="导出" />
+        </ui:CommandBar>
     </Grid>
 </Window>
