@@ -87,6 +87,17 @@ namespace MyEveryDay
                 throw new KeyNotFoundException($"没有找到{year}年{month}月{day}日的记录");
             }
             return item.RichText;
+        }  
+        public static async Task<List<Record>> Get(int year,int month)
+        {
+            var db = MyEveryDayDbContext.GetNew();
+            var records =await db.Records
+                .Where(p => p.Year == year)
+                .Where(p => p.Month == month)
+                .OrderBy(p=>p.Day)
+                .Where(p => !p.IsDeleted)
+                .ToListAsync   ();
+            return records;
         }
     }
 }

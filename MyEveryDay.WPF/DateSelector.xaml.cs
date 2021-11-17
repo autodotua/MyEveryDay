@@ -117,12 +117,10 @@ namespace MyEveryDay.WPF
                 case nameof(ViewModel.Day):
                     if (ViewModel.Day == null)
                     {
-                        CurrentDate = null;
                         SelectedDateChanged?.Invoke(this, SelectedDateChangedEventArgs.FromNull());
                     }
                     else
                     {
-                        CurrentDate = (ViewModel.Year.Value, ViewModel.Month.Value, ViewModel.Day.Value);
                         SelectedDateChanged?.Invoke(this, SelectedDateChangedEventArgs.FromDate(ViewModel.Year.Value, ViewModel.Month.Value, ViewModel.Day.Value));
                     }
                     break;
@@ -131,13 +129,7 @@ namespace MyEveryDay.WPF
             }
         }
 
-        private (int Year, int Month, int Day)? currentDate;
-        public (int Year, int Month, int Day)? CurrentDate
-        {
-            get => currentDate;
-            set => this.SetValueAndNotify(ref currentDate, value, nameof(CurrentDate));
-        }
-
+        public (int? Year, int? Month, int? Day) CurrentDate => (ViewModel.Year, ViewModel.Month, ViewModel.Day);
         public async Task InitializeAsync()
         {
             var today = DateTime.Today;

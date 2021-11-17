@@ -12,6 +12,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 
   </ItemGroup>
@@ -33,6 +34,19 @@
     <Reference Include="WindowsAPICodePack.FzExtension">
       <HintPath>..\libs\WindowsAPICodePack.FzExtension.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\ExportDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Dialogs\ExportDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

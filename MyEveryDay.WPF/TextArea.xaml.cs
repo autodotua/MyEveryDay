@@ -114,7 +114,7 @@ namespace MyEveryDay.WPF
             try
             {
                 var rtf = await RecordService.GetRichText(year, month, day);
-                var range = GetAllRange(txt);
+                var range = txt.Document.GetAllRange();
                 MemoryStream ms = new MemoryStream(Encoding.Default.GetBytes(rtf));
                 range.Load(ms, DataFormats.Rtf);
                 txt.TextChanged += TextChanged;
@@ -175,21 +175,14 @@ namespace MyEveryDay.WPF
                     tabRow.Cells.Add(new TableCell(new Paragraph(new Run(i == 0 ? ("C" + (j + 1)) : ""))) { TextAlignment = TextAlignment.Center });
                 }
             }
-            RichTextBox temp = new RichTextBox();
-            temp.Document.Blocks.Add(tab);
+            var tempDoc = new FlowDocument();
+            tempDoc.Blocks.Add(tab);
             using var ms = new MemoryStream();
-            GetAllRange(temp).Save(ms, DataFormats.Rtf);
+            tempDoc.GetAllRange().Save(ms, DataFormats.Rtf);
             ms.Seek(0, SeekOrigin.Begin);
             txt.Selection.Load(ms, DataFormats.Rtf);
             txt.Selection.ApplyPropertyValue(ForegroundProperty, Foreground);
             txt.CaretPosition = txt.Selection.End;
-        }
-
-
-
-        private TextRange GetAllRange(RichTextBox rtb)
-        {
-            return new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         }
 
         private bool Paste()
