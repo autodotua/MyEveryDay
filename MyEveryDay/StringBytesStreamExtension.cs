@@ -23,9 +23,10 @@ namespace MyEveryDay
             return new TextRange(doc.ContentEnd, doc.ContentEnd);
         }
 
-        public static void LoadRtf(this TextRange range,string rtf)
+        public static TextRange LoadRtf(this TextRange range,string rtf)
         {
             range.Load(rtf.ToStream(), DataFormats.Rtf);
+            return range;
         }
 
     }

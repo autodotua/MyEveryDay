@@ -97,7 +97,10 @@ namespace MyEveryDay.WPF.Dialogs
                     default:
                         break;
                 }
-                var path = filter.CreateSaveFileDialog().GetFilePath();
+                var path = filter
+                    .CreateSaveFileDialog()
+                    .SetDefault("日记")
+                    .GetFilePath();
                 if (path != null)
                 {
                     try
@@ -137,21 +140,17 @@ namespace MyEveryDay.WPF.Dialogs
             FlowDocument doc = new FlowDocument();
             switch (ViewModel.Range)
             {
-                case 0:
-                        var rtf = await RecordService.GetRichText(date.Year.Value, date.Month.Value, date.Day.Value);
-                        doc.GetAllRange().LoadRtf(rtf);
+                case 0://当日
+                    var rtf = await RecordService.GetRichText(date.Year.Value, date.Month.Value, date.Day.Value);
+                    doc.GetAllRange().LoadRtf(rtf);
                     break;
-                case 1:
-                    var records = await RecordService.Get(date.Year.Value, date.Month.Value);
+                case 1://当月
+                    var records = await RecordService.GetRecords(date.Year, date.Month);
                     foreach (var record in records)
                     {
-                        var p = new Paragraph();
-                        var r = new Run(record.Day.ToString() + "日");
-                        r.FontSize = 24;
-                        p.Inlines.Add(r);
-                        doc.Blocks.Add(p);
-                        var tail = doc.GetTailRange();
-                        tail.LoadRtf(record.RichText);
+                        var r = doc.GetTailRange().LoadRtf(Config.Instance.DayTitle);
+                        r.Text = r.Text.Replace("%Day%", record.Day.ToString());
+                        doc.GetTailRange().LoadRtf(record.RichText);
                     }
                     break;
             }

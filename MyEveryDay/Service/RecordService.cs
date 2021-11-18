@@ -88,15 +88,18 @@ namespace MyEveryDay
             }
             return item.RichText;
         }  
-        public static async Task<List<Record>> Get(int year,int month)
+        public static async Task<List<Record>> GetRecords(int? year,int? month=null,int? day=null)
         {
             var db = MyEveryDayDbContext.GetNew();
             var records =await db.Records
-                .Where(p => p.Year == year)
-                .Where(p => p.Month == month)
-                .OrderBy(p=>p.Day)
+                .Where(p => !year.HasValue || p.Year == year.Value)
+                .Where(p => !month.HasValue || p.Month == month.Value)
+                .Where(p => !day.HasValue || p.Month == day.Value)
+                .OrderBy(p => p.Year)
+                .ThenBy(p => p.Month)
+                .ThenBy(p => p.Day)
                 .Where(p => !p.IsDeleted)
-                .ToListAsync   ();
+                .ToListAsync();
             return records;
         }
     }
