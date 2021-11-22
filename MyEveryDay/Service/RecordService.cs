@@ -88,7 +88,7 @@ namespace MyEveryDay
             }
             return item.RichText;
         }  
-        public static async Task<List<Record>> GetRecords(int? year,int? month=null,int? day=null)
+        public static async Task<List<Record>> GetRecords(int? year=null,int? month=null,int? day=null)
         {
             var db = MyEveryDayDbContext.GetNew();
             var records =await db.Records

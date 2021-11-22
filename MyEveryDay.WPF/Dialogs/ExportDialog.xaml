@@ -37,6 +37,6 @@
             ui:ControlHelper.Header="导出格式"
             ItemsSource="{Binding Formats}"
             SelectedItem="{Binding Format}" />
-        <TextBlock Text="{Binding Message}" />
+        <TextBlock Text="{Binding Message}"  TextWrapping="Wrap"/>
     </ui:SimpleStackPanel>
 </ui:ContentDialog>

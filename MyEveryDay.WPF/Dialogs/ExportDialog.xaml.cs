@@ -2,6 +2,7 @@
 using Microsoft.WindowsAPICodePack.FzExtension;
 using ModernWpf.Controls;
 using ModernWpf.FzExtension.CommonDialog;
+using MyEveryDay.Service;
 using NPOI.XWPF.UserModel;
 using System;
 using System.Collections.Generic;
@@ -137,27 +138,12 @@ namespace MyEveryDay.WPF.Dialogs
         private async Task ExportRtfAsync(string path)
         {
             CheckDateSelection();
-            FlowDocument doc = new FlowDocument();
-            switch (ViewModel.Range)
-            {
-                case 0://当日
-                    var rtf = await RecordService.GetRichText(date.Year.Value, date.Month.Value, date.Day.Value);
-                    doc.GetAllRange().LoadRtf(rtf);
-                    break;
-                case 1://当月
-                    var records = await RecordService.GetRecords(date.Year, date.Month);
-                    foreach (var record in records)
-                    {
-                        var r = doc.GetTailRange().LoadRtf(Config.Instance.DayTitle);
-                        r.Text = r.Text.Replace("%Day%", record.Day.ToString());
-                        doc.GetTailRange().LoadRtf(record.RichText);
-                    }
-                    break;
-            }
-            using FileStream fs = new FileStream(path, FileMode.Create);
-            var range = doc.GetAllRange();
-            range.ApplyPropertyValue(ForegroundProperty, Brushes.Black);
-            range.Save(fs, DataFormats.Rtf);
+            await ExportService.ExportRtfAsync(path,
+                                               ViewModel.Range,
+                                               date,
+                                               Config.Instance.YearTitle,
+                                               Config.Instance.MonthTitle,
+                                               Config.Instance.DayTitle);
         }
 
         private void CheckDateSelection()
