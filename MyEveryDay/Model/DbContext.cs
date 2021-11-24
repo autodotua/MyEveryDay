@@ -8,7 +8,6 @@ namespace MyEveryDay.Model
 {
     public class MyEveryDayDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        private static DbContext db;
         private bool hasDb = false;
 
         internal static MyEveryDayDbContext GetNew()
@@ -31,5 +30,6 @@ namespace MyEveryDay.Model
         }
 
         public DbSet<Record> Records { get; set; }
+        public DbSet<Template> Templates { get; set; }
     }
 }

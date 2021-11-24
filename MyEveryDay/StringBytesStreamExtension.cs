@@ -27,6 +27,13 @@ namespace MyEveryDay
         {
             range.Load(rtf.ToStream(), DataFormats.Rtf);
             return range;
+        }    
+        public static string GetRtf(this TextRange range)
+        {
+            MemoryStream ms = new MemoryStream();
+            range.Save(ms, DataFormats.Rtf);
+            ms.Close();
+            return Encoding.Default.GetString(ms.ToArray());
         }
 
     }

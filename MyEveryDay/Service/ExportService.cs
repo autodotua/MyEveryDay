@@ -12,8 +12,11 @@ namespace MyEveryDay.Service
 {
     public static class ExportService
     {
-        public static async Task ExportRtfAsync(string path,int range, (int? Year, int? Month, int? Day) date,string yearTitle,string monthTitle,string dayTitle)
+        public static async Task ExportRtfAsync(string path,int range, (int? Year, int? Month, int? Day) date)
         {
+            string dayTitle = await TemplateService.GetDayTitleAsync();
+            string monthTitle = await TemplateService.GetMonthTitleAsync();
+            string yearTitle = await TemplateService.GetYearTitleAsync();
             FlowDocument doc = new FlowDocument();
             doc.Blocks.Add(new Paragraph());
             switch (range)

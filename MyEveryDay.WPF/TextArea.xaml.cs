@@ -55,6 +55,7 @@ namespace MyEveryDay.WPF
         private (int year, int month, int day)? date = null;
         private bool needSave = false;
         private Timer timer;
+        public bool DisableAutoSave { get; set; } = false;
         private bool updatingSelection = false;
         public TextArea()
         {
@@ -104,7 +105,7 @@ namespace MyEveryDay.WPF
             txt.Document.Blocks.Clear();
         }
 
-        public async Task LoadData(int year, int month, int day)
+        public async Task LoadDataAsync(int year, int month, int day)
         {
             txt.TextChanged -= TextChanged;
             await SaveAsync();
@@ -126,6 +127,15 @@ namespace MyEveryDay.WPF
             {
                 throw;
             }
+        }
+
+        public void LoadRtf(string data)
+        {
+            txt.Document.GetAllRange().LoadRtf(data);
+        }
+        public void GetRtf()
+        {
+            txt.Document.GetAllRange().GetRtf();
         }
 
         public async Task SaveAsync()
@@ -295,13 +305,16 @@ namespace MyEveryDay.WPF
         }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            timer = new Timer(new TimerCallback(async t =>
+            if (!DisableAutoSave)
             {
-                if (needSave)
+                timer = new Timer(new TimerCallback(async t =>
                 {
-                    await SaveAsync();
-                }
-            }), null, 10000, 10000);
+                    if (needSave)
+                    {
+                        await SaveAsync();
+                    }
+                }), null, 10000, 10000);
+            }
         }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)

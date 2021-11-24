@@ -1,26 +1,12 @@
-﻿using FzLib;
+﻿#define WORD_TEST
+
+using FzLib;
 using Microsoft.WindowsAPICodePack.FzExtension;
 using ModernWpf.Controls;
-using ModernWpf.FzExtension.CommonDialog;
 using MyEveryDay.Service;
-using NPOI.XWPF.UserModel;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MyEveryDay.WPF.Dialogs
 {
@@ -49,8 +35,12 @@ namespace MyEveryDay.WPF.Dialogs
         /// 0不分，1按日，2按月，3按年
         /// </remarks>
         public int Split { get; set; }
-        public string[] Formats => new[] { "RTF" };
+        public string[] Formats => new[] { "RTF","Word" };
+#if DEBUG && WORD_TEST
+        private string format = "Word";
+#else
         private string format = "RTF";
+#endif
         public string Format
         {
             get => format;
@@ -94,6 +84,9 @@ namespace MyEveryDay.WPF.Dialogs
                 {
                     case "RTF":
                         filter.Add("RTF 文档", "rtf");
+                        break;
+                    case "Word":
+                        filter.Add("Word 文档", "word");
                         break;
                     default:
                         break;
@@ -140,10 +133,7 @@ namespace MyEveryDay.WPF.Dialogs
             CheckDateSelection();
             await ExportService.ExportRtfAsync(path,
                                                ViewModel.Range,
-                                               date,
-                                               Config.Instance.YearTitle,
-                                               Config.Instance.MonthTitle,
-                                               Config.Instance.DayTitle);
+                                               date);
         }
 
         private void CheckDateSelection()

@@ -43,7 +43,7 @@ namespace MyEveryDay.WPF
             }
             else
             {
-                await textArea.LoadData(e.Year, e.Month, e.Day);
+                await textArea.LoadDataAsync(e.Year, e.Month, e.Day);
             }
         }
 
@@ -52,6 +52,12 @@ namespace MyEveryDay.WPF
             var date = dateSelector.CurrentDate;
             var dialog = new ExportDialog(date);
             await dialog.ShowAsync();
+        }
+
+        private void TemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new TemplateWindow() { Owner = this };
+            dialog.ShowDialog();
         }
     }
 }
