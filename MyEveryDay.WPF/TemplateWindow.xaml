@@ -29,29 +29,52 @@
             HorizontalAlignment="Center"
             Opacity="0.8"
             Text="{Binding Title, ElementName=window}" />
-        <Grid Margin="8">
+        <Grid Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="16" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="8" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
+                Margin="8"
                 HorizontalAlignment="Center"
                 FontWeight="Bold"
                 Text="文章模板" />
             <TextBlock
-                Grid.Row="4"
+                Grid.Row="6"
                 HorizontalAlignment="Center"
                 FontWeight="Bold"
                 Text="日期模板" />
-            <ListView Grid.Row="2" />
             <ListView
-                Grid.Row="6"
-                SelectionChanged="ListView_SelectionChanged">
+                Grid.Row="2"
+                DisplayMemberPath="Name"
+                ItemsSource="{Binding ArticleTemplates}"
+                SelectedItem="{Binding ArticleTemplateSelectedItem}"
+                SelectionChanged="ArticleTemplateListView_SelectionChanged" >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <EventSetter Event="MouseRightButtonUp" Handler="ListViewItem_MouseRightButtonUp"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <Button
+                Grid.Row="4"
+                HorizontalAlignment="Stretch"
+                Background="Transparent"
+                Click="AddTemplateButton_Click"
+                ToolTip="新增文章模板">
+                <ui:SymbolIcon Symbol="Add" />
+            </Button>
+            <ListView
+                Grid.Row="8"
+                SelectedIndex="{Binding DateTitleSelectedIndex}"
+                SelectionChanged="DateTitleListView_SelectionChanged">
                 <ListViewItem>日标题模板</ListViewItem>
                 <ListViewItem>月标题模板</ListViewItem>
                 <ListViewItem>年标题模板</ListViewItem>

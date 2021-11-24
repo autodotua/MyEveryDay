@@ -35,6 +35,7 @@
             x:Key="AddButtonStyle"
             BasedOn="{StaticResource DefaultButtonStyle}"
             TargetType="{x:Type Button}">
+            <Setter Property="Padding" Value="8,12" />
             <Setter Property="VerticalAlignment" Value="Bottom" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="Background" Value="Transparent" />

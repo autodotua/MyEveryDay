@@ -62,13 +62,13 @@ namespace MyEveryDay
                     RichText = rtf,
                     PlainText = text
                 };
-                await db.Records.AddAsync(item);
+                 db.Records.Add(item);
             }
             else
             {
                 item.RichText = rtf;
                 item.PlainText = text;
-                db.Entry(item).State = EntityState.Modified;
+                db.Update(item);
             }
             await db.SaveChangesAsync();
         }

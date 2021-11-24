@@ -25,7 +25,14 @@ namespace MyEveryDay
 
         public static TextRange LoadRtf(this TextRange range,string rtf)
         {
-            range.Load(rtf.ToStream(), DataFormats.Rtf);
+            if (string.IsNullOrEmpty(rtf))
+            {
+                range.Text = "";
+            }
+            else
+            {
+                range.Load(rtf.ToStream(), DataFormats.Rtf);
+            }
             return range;
         }    
         public static string GetRtf(this TextRange range)

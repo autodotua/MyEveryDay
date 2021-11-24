@@ -115,9 +115,7 @@ namespace MyEveryDay.WPF
             try
             {
                 var rtf = await RecordService.GetRichText(year, month, day);
-                var range = txt.Document.GetAllRange();
-                MemoryStream ms = new MemoryStream(Encoding.Default.GetBytes(rtf));
-                range.Load(ms, DataFormats.Rtf);
+                txt.Document.GetAllRange().LoadRtf(rtf);
                 txt.TextChanged += TextChanged;
             }
             catch (KeyNotFoundException)
@@ -132,10 +130,11 @@ namespace MyEveryDay.WPF
         public void LoadRtf(string data)
         {
             txt.Document.GetAllRange().LoadRtf(data);
+            txt.Document.GetAllRange().ApplyPropertyValue(ForegroundProperty, Foreground);
         }
-        public void GetRtf()
+        public string GetRtf()
         {
-            txt.Document.GetAllRange().GetRtf();
+            return txt.Document.GetAllRange().GetRtf();
         }
 
         public async Task SaveAsync()

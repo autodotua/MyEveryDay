@@ -14,15 +14,20 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     PrimaryButtonText="导出"
     mc:Ignorable="d">
+    <ui:ContentDialog.Resources>
+        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+    </ui:ContentDialog.Resources>
     <ui:SimpleStackPanel
         Orientation="Vertical"
         Spacing="8">
         <ComboBox
             ui:ControlHelper.Header="导出范围"
             SelectedIndex="{Binding Range}">
-            <ComboBoxItem>当前日</ComboBoxItem>
-            <ComboBoxItem>当前月</ComboBoxItem>
-            <ComboBoxItem>当前年</ComboBoxItem>
+            <ComboBoxItem>本日</ComboBoxItem>
+            <ComboBoxItem>本月</ComboBoxItem>
+            <ComboBoxItem>本年</ComboBoxItem>
             <ComboBoxItem>全部</ComboBoxItem>
         </ComboBox>
         <ComboBox
