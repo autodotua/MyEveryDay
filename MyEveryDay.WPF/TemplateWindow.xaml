@@ -56,10 +56,14 @@
                 DisplayMemberPath="Name"
                 ItemsSource="{Binding ArticleTemplates}"
                 SelectedItem="{Binding ArticleTemplateSelectedItem}"
-                SelectionChanged="ArticleTemplateListView_SelectionChanged" >
+                SelectionChanged="ArticleTemplateListView_SelectionChanged">
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                        <EventSetter Event="MouseRightButtonUp" Handler="ListViewItem_MouseRightButtonUp"/>
+                    <Style
+                        BasedOn="{StaticResource DefaultListViewItemStyle}"
+                        TargetType="{x:Type ListViewItem}">
+                        <EventSetter
+                            Event="MouseRightButtonUp"
+                            Handler="ListViewItem_MouseRightButtonUp" />
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>

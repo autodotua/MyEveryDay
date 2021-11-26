@@ -73,23 +73,26 @@
             </Border>
         </Grid>
 
-        <ui:SimpleStackPanel Spacing="8" HorizontalAlignment="Center">
+        <ui:SimpleStackPanel
+            HorizontalAlignment="Center"
+            Spacing="8">
             <TextBlock
                 Grid.Column="2"
                 Text="列宽" />
             <DataGrid
                 MaxHeight="240"
-            
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 CanUserDeleteRows="False"
                 ItemsSource="{Binding Columns}">
                 <DataGrid.Columns>
                     <DataGridTextColumn
+                        MinWidth="60"
                         Binding="{Binding Index}"
-                        Header="列号" MinWidth="60"
+                        Header="列号"
                         IsReadOnly="True" />
-                    <DataGridTextColumn MinWidth="120"
+                    <DataGridTextColumn
+                        MinWidth="120"
                         Binding="{Binding Width}"
                         Header="宽度" />
                 </DataGrid.Columns>

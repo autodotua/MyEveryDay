@@ -73,7 +73,7 @@ namespace MyEveryDay
             await db.SaveChangesAsync();
         }
 
-        public static async Task<string> GetRichText(int year,int month,int day)
+        public static async Task<string> GetRichTextAsync(int year,int month,int day)
         {
             var db = MyEveryDayDbContext.GetNew();
             var item =await db.Records
@@ -88,7 +88,7 @@ namespace MyEveryDay
             }
             return item.RichText;
         }  
-        public static async Task<List<Record>> GetRecords(int? year=null,int? month=null,int? day=null)
+        public static async Task<List<Record>> GetRecordsAsync(int? year=null,int? month=null,int? day=null)
         {
             var db = MyEveryDayDbContext.GetNew();
             var records =await db.Records

@@ -15,8 +15,10 @@
     PrimaryButtonText="导出"
     mc:Ignorable="d">
     <ui:ContentDialog.Resources>
-        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
-            <Setter Property="MinWidth" Value="80"/>
+        <Style
+            BasedOn="{StaticResource DefaultComboBoxStyle}"
+            TargetType="{x:Type ComboBox}">
+            <Setter Property="MinWidth" Value="80" />
         </Style>
     </ui:ContentDialog.Resources>
     <ui:SimpleStackPanel
@@ -42,6 +44,8 @@
             ui:ControlHelper.Header="导出格式"
             ItemsSource="{Binding Formats}"
             SelectedItem="{Binding Format}" />
-        <TextBlock Text="{Binding Message}"  TextWrapping="Wrap"/>
+        <TextBlock
+            Text="{Binding Message}"
+            TextWrapping="Wrap" />
     </ui:SimpleStackPanel>
 </ui:ContentDialog>

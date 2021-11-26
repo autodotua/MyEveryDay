@@ -86,7 +86,7 @@ namespace MyEveryDay.WPF.Dialogs
                         filter.Add("RTF 文档", "rtf");
                         break;
                     case "Word":
-                        filter.Add("Word 文档", "word");
+                        filter.Add("Word 文档", "docx");
                         break;
                     default:
                         break;
@@ -118,23 +118,24 @@ namespace MyEveryDay.WPF.Dialogs
 
         private async Task ExportToSingleFileAsync(string path)
         {
+            CheckDateSelection();
             switch (ViewModel.Format)
             {
                 case "RTF":
-                    await ExportRtfAsync(path);
+                    await ExportService.ExportRtfAsync(path,
+                                                       ViewModel.Range,
+                                                       date);
+                    break;
+                case "Word":
+                    await ExportService.ExportWordAsync(path,
+                                                       ViewModel.Range,
+                                                       date);
                     break;
                 default:
                     break;
             }
         }
 
-        private async Task ExportRtfAsync(string path)
-        {
-            CheckDateSelection();
-            await ExportService.ExportRtfAsync(path,
-                                               ViewModel.Range,
-                                               date);
-        }
 
         private void CheckDateSelection()
         {

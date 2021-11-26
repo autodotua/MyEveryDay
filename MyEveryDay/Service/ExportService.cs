@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.XWPF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,107 @@ namespace MyEveryDay.Service
 {
     public static class ExportService
     {
-        public static async Task ExportRtfAsync(string path,int range, (int? Year, int? Month, int? Day) date)
+        private static void AddInlines(XWPFParagraph paragraph, InlineCollection inlines)
+        {
+            foreach (var inline in inlines)
+            {
+                switch (inline)
+                {
+                    case Run r:
+                        {
+                            var run = paragraph.CreateRun();
+                            run.SetText(r.Text);
+                            run.FontSize = r.FontSize;
+                            run.FontFamily = r.FontFamily.Source;
+                            if (r.TextDecorations.Equals(TextDecorations.Underline))
+                            {
+                                run.SetUnderline(UnderlinePatterns.Single);
+                            }
+                            if (r.FontWeight.Equals(FontWeights.Bold))
+                            {
+                                run.IsBold = true;
+                            }
+                            if (r.FontStyle.Equals(FontStyles.Italic))
+                            {
+                                run.IsItalic = true;
+                            }
+
+                        }
+                        break;
+                    case Span span:
+                        {
+                            AddInlines(paragraph, span.Inlines);
+                        }
+                        break;
+                    case InlineUIContainer c:
+                        break;
+                    case AnchoredBlock a:
+                        break;
+                    case LineBreak n:
+                        {
+                            var run = paragraph.CreateRun();
+                            run.AddBreak();
+                        }
+                        break;
+                }
+            }
+        }
+
+        private static void Rtf2Word(XWPFDocument doc,FlowDocument rtf )
+        {
+            foreach (var block in rtf.Blocks)
+            {
+                Paragraph paragraph = new Paragraph();
+                switch (block)
+                {
+                    case Paragraph p:
+                        {
+                            XWPFParagraph para = doc.CreateParagraph();
+                            AddInlines(para, p.Inlines);
+                        }
+                        break;
+                    case Section s:
+                        {
+
+                        }
+                        break;
+                    case Table t:
+                        {
+
+                        }
+                        break;
+                    case BlockUIContainer c:
+                        {
+
+                        }
+                        break;
+                    case List l:
+                        {
+
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+        public static async Task ExportWordAsync(string path, int range, (int? Year, int? Month, int? Day) date)
+        {
+            string dayTitle = await TemplateService.GetDayTitleAsync();
+            string monthTitle = await TemplateService.GetMonthTitleAsync();
+            string yearTitle = await TemplateService.GetYearTitleAsync();
+
+            XWPFDocument doc = new XWPFDocument();
+            var rtf=new FlowDocument();
+            rtf.GetAllRange().LoadRtf(await RecordService.GetRichTextAsync(date.Year.Value,date.Month.Value,date.Day.Value));
+
+            Rtf2Word(doc, rtf);
+            using var file=File.OpenWrite(path);
+            doc.Write(file);
+            file.Close(); 
+        }
+        public static async Task ExportRtfAsync(string path, int range, (int? Year, int? Month, int? Day) date)
         {
             string dayTitle = await TemplateService.GetDayTitleAsync();
             string monthTitle = await TemplateService.GetMonthTitleAsync();
@@ -22,12 +123,12 @@ namespace MyEveryDay.Service
             switch (range)
             {
                 case 0://当日
-                    var rtf = await RecordService.GetRichText(date.Year.Value, date.Month.Value, date.Day.Value);
+                    var rtf = await RecordService.GetRichTextAsync(date.Year.Value, date.Month.Value, date.Day.Value);
                     doc.GetAllRange().LoadRtf(rtf);
                     break;
                 case 1://当月
                     {
-                        var records = await RecordService.GetRecords(date.Year, date.Month);
+                        var records = await RecordService.GetRecordsAsync(date.Year, date.Month);
                         foreach (var record in records)
                         {
                             var r = doc.GetTailRange().LoadRtf(dayTitle);
@@ -38,7 +139,7 @@ namespace MyEveryDay.Service
                     break;
                 case 2://当年
                     {
-                        var records = await RecordService.GetRecords(date.Year);
+                        var records = await RecordService.GetRecordsAsync(date.Year);
                         foreach (var month in records.Select(p => p.Month).Distinct())
                         {
                             var rM = doc.GetTailRange().LoadRtf(monthTitle);
@@ -54,7 +155,7 @@ namespace MyEveryDay.Service
                     break;
                 case 3://全部
                     {
-                        var records = await RecordService.GetRecords();
+                        var records = await RecordService.GetRecordsAsync();
                         foreach (var year in records.Select(p => p.Year).Distinct())
                         {
                             var rY = doc.GetTailRange().LoadRtf(yearTitle);

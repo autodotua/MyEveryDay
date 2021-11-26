@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MediaInfo.Wrapper.Core" Version="21.3.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="NPOI" Version="2.5.5" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="FzCoreLib.Windows">

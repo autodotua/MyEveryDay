@@ -114,7 +114,7 @@ namespace MyEveryDay.WPF
             date = (year, month, day);
             try
             {
-                var rtf = await RecordService.GetRichText(year, month, day);
+                var rtf = await RecordService.GetRichTextAsync(year, month, day);
                 txt.Document.GetAllRange().LoadRtf(rtf);
                 txt.TextChanged += TextChanged;
             }
