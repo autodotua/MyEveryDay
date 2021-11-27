@@ -13,7 +13,7 @@ namespace MyEveryDay.Service
 {
     public static class ExportService
     {
-        private static void AddInlines(XWPFParagraph paragraph, InlineCollection inlines)
+        private static void AddInlines(XWPFParagraph paragraph, IEnumerable<Inline> inlines)
         {
             foreach (var inline in inlines)
             {
@@ -58,10 +58,9 @@ namespace MyEveryDay.Service
                 }
             }
         }
-
-        private static void Rtf2Word(XWPFDocument doc,FlowDocument rtf )
+        private static void AddBlocks(XWPFDocument doc, IEnumerable<Block> blocks)
         {
-            foreach (var block in rtf.Blocks)
+            foreach (var block in blocks)
             {
                 Paragraph paragraph = new Paragraph();
                 switch (block)
@@ -74,7 +73,7 @@ namespace MyEveryDay.Service
                         break;
                     case Section s:
                         {
-
+                            AddBlocks(doc, s.Blocks);
                         }
                         break;
                     case Table t:
@@ -89,14 +88,46 @@ namespace MyEveryDay.Service
                         break;
                     case List l:
                         {
+                        //    var numbering = doc.CreateNumbering();
+                        //    foreach (var item in l.ListItems)
+                        //    {
 
-                        }
+                        //        XWPFParagraph para = doc.CreateParagraph();
+                        //        var id = Guid.NewGuid().ToString();
+                        //        numbering.AddNum(id);
+                        //        para.SetNumID(id);
+                        //        if (item.Blocks.Count == 0)
+                        //        {
+                        //            continue;
+                        //        }
+                        //        else if (item.Blocks.Count == 1)
+                        //        {
+                        //            if (item.Blocks.FirstBlock is Paragraph p)
+                        //            {
+                        //                AddInlines(para, p.Inlines);
+                        //            }
+                        //            else
+                        //            {
+
+                        //            }
+                        //        }
+                        //        else
+                        //        {
+
+                        //        }
+                        //    }
+                        //}
                         break;
 
                     default:
                         break;
                 }
             }
+
+        }
+        private static void Rtf2Word(XWPFDocument doc, FlowDocument rtf)
+        {
+            AddBlocks(doc, rtf.Blocks);
         }
         public static async Task ExportWordAsync(string path, int range, (int? Year, int? Month, int? Day) date)
         {
@@ -105,13 +136,13 @@ namespace MyEveryDay.Service
             string yearTitle = await TemplateService.GetYearTitleAsync();
 
             XWPFDocument doc = new XWPFDocument();
-            var rtf=new FlowDocument();
-            rtf.GetAllRange().LoadRtf(await RecordService.GetRichTextAsync(date.Year.Value,date.Month.Value,date.Day.Value));
+            var rtf = new FlowDocument();
+            rtf.GetAllRange().LoadRtf(await RecordService.GetRichTextAsync(date.Year.Value, date.Month.Value, date.Day.Value));
 
             Rtf2Word(doc, rtf);
-            using var file=File.OpenWrite(path);
+            using var file = File.OpenWrite(path);
             doc.Write(file);
-            file.Close(); 
+            file.Close();
         }
         public static async Task ExportRtfAsync(string path, int range, (int? Year, int? Month, int? Day) date)
         {

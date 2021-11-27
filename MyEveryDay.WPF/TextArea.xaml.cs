@@ -63,6 +63,90 @@ namespace MyEveryDay.WPF
             InitializeComponent();
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             Dispatcher.ShutdownFinished += (s, e) => SaveAsync().Wait();
+#if DEBUG
+            AddDebugButton();
+#endif
+        }
+
+        private void AddDebugButton()
+        {
+            Button btn = new Button();
+            (Content as Grid).Children.Add(btn);
+            Grid.SetColumn(btn, 99);
+            Grid.SetRow(btn, 99);
+            btn.Content = "调试";
+            btn.Click += (s, e) =>
+            {
+                var doc = txt.Document;
+                ShowBlock(doc.Blocks,1);
+                void ShowBlock(BlockCollection blocks,int level)
+                {
+                    Debug.Write(new string('\t', level));
+                    foreach (var block in blocks)
+                    {
+                        switch (block)
+                        {
+                            case Paragraph p:
+                                Debug.WriteLine("Paragraph");
+                                ShowInlines(p.Inlines,level+1);
+                                break;
+                            case Section s:
+                                Debug.WriteLine("Section");
+                                ShowBlock(s.Blocks, level + 1);
+                                break;
+                            case Table t:
+                                {
+                                }
+                                break;
+                            case BlockUIContainer c:
+                                {
+
+                                }
+                                break;
+                            case List l:
+                                {
+                                Debug.WriteLine("List");
+                                    foreach (var item in l.ListItems)
+                                    {
+                                        ShowBlock(item.Blocks,level+1);
+                                    }
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+
+                }
+                void ShowInlines(InlineCollection inlines,int level)
+                {
+                    Debug.Write(new string('\t', level));
+                    foreach (var inline in inlines)
+                    {
+                        switch (inline)
+                        {
+                            case Run r:
+                                Debug.WriteLine("Run：" + r.Text);
+                                break;
+                            case Span span:
+                                Debug.WriteLine("Span") ;
+                                ShowInlines( span.Inlines,level+1);
+                                break;
+                            case InlineUIContainer c:
+                                break;
+                            case AnchoredBlock a:
+                                break;
+                            case LineBreak n:
+                                {
+                                    Debug.WriteLine("LineBreak");
+                                }
+                                break;
+                        }
+                    }
+                }
+
+            };
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
