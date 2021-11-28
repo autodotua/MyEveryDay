@@ -41,9 +41,15 @@
             <ComboBoxItem>每年导出一个文件</ComboBoxItem>
         </ComboBox>
         <ComboBox
-            ui:ControlHelper.Header="导出格式"
+            ui:ControlHelper.Header="文件格式"
             ItemsSource="{Binding Formats}"
             SelectedItem="{Binding Format}" />
+        <ComboBox
+            ui:ControlHelper.Header="&#x201c;日&#x201d;样式"
+            SelectedIndex="{Binding DayStyle}" >
+            <ComboBoxItem>使用数字编号</ComboBoxItem>
+            <ComboBoxItem>使用日标题</ComboBoxItem>
+        </ComboBox>
         <TextBlock
             Text="{Binding Message}"
             TextWrapping="Wrap" />

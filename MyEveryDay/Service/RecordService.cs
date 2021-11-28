@@ -19,18 +19,18 @@ namespace MyEveryDay
                 .Distinct()
                 .ToListAsync();
         }   
-        public static Task<List<int>> GetMonths(int year)
+        public static Task<List<int>> GetMonthsAsync(int year)
         {
             using var db = MyEveryDayDbContext.GetNew();
             return db.Records
                 .Where(p=>!p.IsDeleted)
                 .Where(p=>p.Year == year)
                 .Select(p=>p.Month)
-                .OrderBy(p=>p)
                 .Distinct()
+                .OrderBy(p => p)
                 .ToListAsync();
         }   
-        public static Task<List<int>> GetDays(int year,int month)
+        public static Task<List<int>> GetDaysAsync(int year,int month)
         {
             using var db = MyEveryDayDbContext.GetNew();
             return db.Records
@@ -38,8 +38,8 @@ namespace MyEveryDay
                 .Where(p=>p.Year == year)
                 .Where(p=>p.Month == month)
                 .Select(p=>p.Day)
-                .OrderBy(p=>p)
                 .Distinct()
+                .OrderBy(p => p)
                 .ToListAsync();
         }
 
@@ -102,5 +102,7 @@ namespace MyEveryDay
                 .ToListAsync();
             return records;
         }
+
+       
     }
 }

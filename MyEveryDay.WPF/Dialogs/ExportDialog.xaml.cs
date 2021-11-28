@@ -1,4 +1,4 @@
-﻿#define WORD_TEST
+﻿//#define WORD_TEST
 
 using FzLib;
 using Microsoft.WindowsAPICodePack.FzExtension;
@@ -35,7 +35,7 @@ namespace MyEveryDay.WPF.Dialogs
         /// 0不分，1按日，2按月，3按年
         /// </remarks>
         public int Split { get; set; }
-        public string[] Formats => new[] { "RTF","Word" };
+        public string[] Formats => new[] { "RTF", "Word" };
 #if DEBUG && WORD_TEST
         private string format = "Word";
 #else
@@ -51,6 +51,12 @@ namespace MyEveryDay.WPF.Dialogs
         {
             get => message;
             set => this.SetValueAndNotify(ref message, value, nameof(Message));
+        }
+        private int dayStyle;
+        public int DayStyle
+        {
+            get => dayStyle;
+            set => this.SetValueAndNotify(ref dayStyle, value, nameof(DayStyle));
         }
 
 
@@ -123,12 +129,12 @@ namespace MyEveryDay.WPF.Dialogs
             {
                 case "RTF":
                     await ExportService.ExportRtfAsync(path,
-                                                       ViewModel.Range,
-                                                       date);
+                                                 (ExportRange)ViewModel.Range,
+                                                       date, (DayStyle)ViewModel.DayStyle);
                     break;
                 case "Word":
                     await ExportService.ExportWordAsync(path,
-                                                       ViewModel.Range,
+                                                     (ExportRange)ViewModel.Range,
                                                        date);
                     break;
                 default:

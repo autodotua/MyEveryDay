@@ -81,9 +81,9 @@ namespace MyEveryDay.WPF
                 ShowBlock(doc.Blocks,1);
                 void ShowBlock(BlockCollection blocks,int level)
                 {
-                    Debug.Write(new string('\t', level));
                     foreach (var block in blocks)
                     {
+                        Debug.Write(new string('\t', level));
                         switch (block)
                         {
                             case Paragraph p:
@@ -95,13 +95,10 @@ namespace MyEveryDay.WPF
                                 ShowBlock(s.Blocks, level + 1);
                                 break;
                             case Table t:
-                                {
-                                }
+                                Debug.WriteLine("Table");
                                 break;
                             case BlockUIContainer c:
-                                {
-
-                                }
+                                Debug.WriteLine("BlockUIContainer：" + c.Child.GetType().Name);
                                 break;
                             case List l:
                                 {
@@ -121,9 +118,9 @@ namespace MyEveryDay.WPF
                 }
                 void ShowInlines(InlineCollection inlines,int level)
                 {
-                    Debug.Write(new string('\t', level));
                     foreach (var inline in inlines)
                     {
+                        Debug.Write(new string('\t', level));
                         switch (inline)
                         {
                             case Run r:
@@ -134,8 +131,10 @@ namespace MyEveryDay.WPF
                                 ShowInlines( span.Inlines,level+1);
                                 break;
                             case InlineUIContainer c:
+                                Debug.WriteLine("InlineUIContainer："+c.Child.GetType().Name);
                                 break;
                             case AnchoredBlock a:
+                                Debug.WriteLine("AnchoredBlock");
                                 break;
                             case LineBreak n:
                                 {
@@ -456,7 +455,10 @@ namespace MyEveryDay.WPF
             txt.Selection.ClearAllProperties();
         }
 
-
+        private async void txt_LostFocus(object sender, RoutedEventArgs e)
+        {
+            await SaveAsync();
+        }
     }
 
     public class TextAreaViewModel : INotifyPropertyChanged

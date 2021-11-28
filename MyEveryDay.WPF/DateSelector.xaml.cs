@@ -84,7 +84,7 @@ namespace MyEveryDay.WPF
                             ViewModel.Month = null;
                             break;
                         }
-                        ViewModel.Months = new ObservableCollection<int>(await RecordService.GetMonths(ViewModel.Year.Value));
+                        ViewModel.Months = new ObservableCollection<int>(await RecordService.GetMonthsAsync(ViewModel.Year.Value));
                         if (ViewModel.Year == today.Year && !ViewModel.Months.Contains(today.Month))
                         {
                             InsertIntoDates(ViewModel.Months, today.Month);
@@ -103,7 +103,7 @@ namespace MyEveryDay.WPF
                             ViewModel.Day = null;
                             break;
                         }
-                        ViewModel.Days = new ObservableCollection<int>(await RecordService.GetDays(ViewModel.Year.Value, ViewModel.Month.Value));
+                        ViewModel.Days = new ObservableCollection<int>(await RecordService.GetDaysAsync(ViewModel.Year.Value, ViewModel.Month.Value));
                         if (ViewModel.Year == today.Year && ViewModel.Month == today.Month && !ViewModel.Days.Contains(today.Day))
                         {
                             InsertIntoDates(ViewModel.Days, today.Day);
@@ -140,14 +140,14 @@ namespace MyEveryDay.WPF
             }
             ViewModel.Year = today.Year;
 
-            ViewModel.Months = new ObservableCollection<int>(await RecordService.GetMonths(today.Year));
+            ViewModel.Months = new ObservableCollection<int>(await RecordService.GetMonthsAsync(today.Year));
             if (!ViewModel.Months.Contains(today.Month))
             {
                 InsertIntoDates(ViewModel.Months, today.Month);
             }
             ViewModel.Month = today.Month;
 
-            ViewModel.Days = new ObservableCollection<int>(await RecordService.GetDays(today.Year, today.Month));
+            ViewModel.Days = new ObservableCollection<int>(await RecordService.GetDaysAsync(today.Year, today.Month));
             if (!ViewModel.Days.Contains(today.Day))
             {
                 InsertIntoDates(ViewModel.Days, today.Day);

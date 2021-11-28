@@ -165,6 +165,7 @@
             AcceptsReturn="True"
             AcceptsTab="True"
             ContextMenu="{x:Null}"
+            LostFocus="txt_LostFocus"
             PreviewKeyDown="TextPreviewKeyDown"
             SelectionChanged="SelectionChanged"
             UndoLimit="100">
