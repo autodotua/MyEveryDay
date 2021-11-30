@@ -20,6 +20,10 @@ namespace MyEveryDay
         } 
         public static TextRange GetTailRange(this FlowDocument doc)
         {
+            if(doc.Blocks.LastBlock is  List)
+            {
+                doc.Blocks.Add(new Paragraph());
+            }
             return new TextRange(doc.ContentEnd, doc.ContentEnd);
         }
 

@@ -226,7 +226,9 @@ namespace MyEveryDay.Service
                     {
                         List list = new List()
                         {
-                            MarkerStyle = TextMarkerStyle.Decimal
+                            MarkerStyle = TextMarkerStyle.Decimal,//数字序号
+                            Margin = new Thickness(0, 0, 0, 0),//文字部分从0缩进开始
+                            //FontFamily = new System.Windows.Media.FontFamily("DengXian")
                         };
                         var items = new List<ListItem>();
                         for (int i = 1; i <= DateTime.DaysInMonth(year, month); i++)
